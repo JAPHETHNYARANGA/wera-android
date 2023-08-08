@@ -114,7 +114,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Confirm Password") },
+                label = { Text("Password") },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color(0xFF1A202C),
                     unfocusedBorderColor = Color(0xFF1A202C)

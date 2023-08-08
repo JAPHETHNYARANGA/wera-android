@@ -5,10 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.wera.presentation.viewModel.DeleteAccountViewModel
+import com.example.wera.presentation.viewModel.DeleteListingViewModel
+import com.example.wera.presentation.viewModel.GetCategoriesViewModel
 import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
+import com.example.wera.presentation.viewModel.LogoutViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 import com.example.wera.presentation.views.Contents.FavoritesScreen
@@ -28,7 +32,11 @@ fun BottomNavGraph(
     updateProfileViewModel: UpdateProfileViewModel,
     getUserViewModel : GetUserViewModel,
     getUserListingsViewModel : GetUserListingsViewModel,
-    getIndividualItemViewModel : GetIndividualItemViewModel
+    getIndividualItemViewModel : GetIndividualItemViewModel,
+    deleteListingViewModel: DeleteListingViewModel,
+    getCategoriesViewModel: GetCategoriesViewModel,
+    logoutViewModel :LogoutViewModel,
+    deleteAccountViewModel: DeleteAccountViewModel
 ){
 
     NavHost(
@@ -42,7 +50,7 @@ fun BottomNavGraph(
 
         composable(route =BottomBarScreen.Favorite.route)
         {
-            FavoritesScreen(postItemViewModel, navController, getListingsViewModel)
+            FavoritesScreen(postItemViewModel, navController, getListingsViewModel,  getUserListingsViewModel, getCategoriesViewModel)
         }
 
         composable(route =BottomBarScreen.Messages.route)
@@ -52,7 +60,7 @@ fun BottomNavGraph(
 
         composable(route =BottomBarScreen.Profile.route)
         {
-            ProfilePage(navController , sharedPreferences, getUserViewModel , getUserListingsViewModel  )
+            ProfilePage(navController , sharedPreferences, getUserViewModel , getUserListingsViewModel, deleteListingViewModel , getListingsViewModel, logoutViewModel, deleteAccountViewModel  )
         }
 
         composable(route = BottomBarScreen.Edit.route)

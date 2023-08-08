@@ -16,11 +16,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.wera.navigation.MainScreen
+import com.example.wera.presentation.viewModel.DeleteAccountViewModel
+import com.example.wera.presentation.viewModel.DeleteListingViewModel
+import com.example.wera.presentation.viewModel.GetCategoriesViewModel
 import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LoginUserViewModel
+import com.example.wera.presentation.viewModel.LogoutViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
 import com.example.wera.presentation.viewModel.RegisterUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
@@ -42,6 +46,10 @@ class MainActivity : ComponentActivity() {
     private val getUserViewModel : GetUserViewModel by viewModels()
     private val getUserListingsViewModel : GetUserListingsViewModel by viewModels()
     private val getIndividualItemViewModel : GetIndividualItemViewModel by viewModels()
+    private val deleteListingViewModel : DeleteListingViewModel by viewModels()
+    private val getCategoriesViewModel : GetCategoriesViewModel by viewModels()
+    private val logoutViewModel : LogoutViewModel by viewModels()
+    private val deleteAccountViewModel : DeleteAccountViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +68,8 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
-                            MainScreen(postItemViewModel, sharedPreferences, getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel)
+                            MainScreen(postItemViewModel, sharedPreferences, getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
+                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel)
                         }
 
                         composable("edit") {

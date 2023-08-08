@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.wera.domain.models.UpdateProfileResponse
 import com.example.wera.domain.useCase.UpdateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import okhttp3.MultipartBody
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
@@ -22,10 +23,10 @@ class UpdateProfileViewModel @Inject constructor(private val updateProfileUseCas
     val updateProfileSuccess : LiveData<Boolean> get() = _updateProfileSuccess
 
     suspend fun updateProfile(
-        name: String, email: String, phone: String, bio: String, occupation:String
+        name: String, email: String, phone: String, bio: String, occupation:String, profile: MultipartBody.Part
     ):UpdateProfileResponse{
         try {
-            return updateProfileUseCase.updateProfile(name, email, phone, bio, occupation)
+            return updateProfileUseCase.updateProfile(name, email, phone, bio, occupation, profile)
         }catch (e: SocketTimeoutException) {
             Log.d("exception", "Timeout Exception")
             throw LoginException("Request timed out")

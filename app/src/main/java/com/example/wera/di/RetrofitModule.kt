@@ -2,31 +2,41 @@ package com.example.wera.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.wera.data.network.DeleteAccount
 import com.example.wera.data.network.DeleteListing
+import com.example.wera.data.network.GetCategories
 import com.example.wera.data.network.GetIndividualListing
 import com.example.wera.data.network.GetPosts
 import com.example.wera.data.network.GetUser
 import com.example.wera.data.network.GetUserListings
 import com.example.wera.data.network.LoginUser
+import com.example.wera.data.network.Logout
 import com.example.wera.data.network.PostItem
 import com.example.wera.data.network.RegisterUser
 import com.example.wera.data.network.UpdateProfile
 import com.example.wera.domain.models.DeleteListingResponse
 import com.example.wera.domain.models.Listings
+import com.example.wera.domain.models.LogoutResponse
+import com.example.wera.domain.repository.DeleteAccountRepository
 import com.example.wera.domain.repository.DeleteListingRepository
+import com.example.wera.domain.repository.GetCategoriesDataRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
 import com.example.wera.domain.repository.GetListingsRepository
 import com.example.wera.domain.repository.GetUserListingsRepository
 import com.example.wera.domain.repository.GetUserRepository
 import com.example.wera.domain.repository.LoginUserRepository
+import com.example.wera.domain.repository.LogoutRepository
 import com.example.wera.domain.repository.RegisterUserRepository
 import com.example.wera.domain.repository.UpdateProfileRepository
+import com.example.wera.domain.useCase.DeleteAccountUseCase
 import com.example.wera.domain.useCase.DeleteListingUseCase
+import com.example.wera.domain.useCase.GetCategoriesDataUseCase
 import com.example.wera.domain.useCase.GetIndividualItemUseCase
 import com.example.wera.domain.useCase.GetListingUseCase
 import com.example.wera.domain.useCase.GetUserListingsUseCase
 import com.example.wera.domain.useCase.GetUserUseCase
 import com.example.wera.domain.useCase.LoginUserUseCase
+import com.example.wera.domain.useCase.LogoutUseCase
 import com.example.wera.domain.useCase.RegisterUserUseCase
 import com.example.wera.domain.useCase.UpdateProfileUseCase
 import dagger.Module
@@ -73,7 +83,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://61d3-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://4854-41-90-64-185.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -83,6 +93,16 @@ object RetrofitModule {
     @Provides
     fun provideLoginInterface(retrofit: Retrofit):LoginUser{
         return retrofit.create(LoginUser::class.java)
+    }
+
+    @Provides
+    fun provideLogoutInterface(retrofit: Retrofit) : Logout{
+        return retrofit.create(Logout::class.java)
+    }
+
+    @Provides
+    fun provideDeleteUserInterface(retrofit: Retrofit) : DeleteAccount{
+        return retrofit.create(DeleteAccount::class.java)
     }
 
     @Provides
@@ -125,6 +145,11 @@ object RetrofitModule {
         return retrofit.create(DeleteListing::class.java)
     }
 
+    @Provides
+    fun provideCategoryData(retrofit: Retrofit) : GetCategories{
+        return retrofit.create(GetCategories::class.java)
+    }
+
     //Repository
 
     @Provides
@@ -132,6 +157,15 @@ object RetrofitModule {
         return LoginUserRepository(loginUser)
     }
 
+    @Provides
+    fun provideLogoutRepository(logout: Logout): LogoutRepository{
+        return LogoutRepository(logout)
+    }
+
+    @Provides
+    fun provideDeleteAccountRepository(deleteAccount: DeleteAccount): DeleteAccountRepository{
+        return DeleteAccountRepository(deleteAccount)
+    }
 
     @Provides
     fun provideRegisterRepository(registerUser: RegisterUser):RegisterUserRepository{
@@ -169,11 +203,26 @@ object RetrofitModule {
         return  DeleteListingRepository(deleteListing)
     }
 
+    @Provides
+    fun providesGetCategories(getCategories: GetCategories): GetCategoriesDataRepository{
+        return GetCategoriesDataRepository(getCategories)
+    }
+
     //UseCase
 
     @Provides
     fun provideLoginUseCase(loginUserRepository: LoginUserRepository):LoginUserUseCase{
         return LoginUserUseCase(loginUserRepository)
+    }
+
+    @Provides
+    fun provideLogoutUseCase(logoutRepository: LogoutRepository) : LogoutUseCase{
+        return LogoutUseCase(logoutRepository)
+    }
+
+    @Provides
+    fun provideDeleteAccountUseCase(deleteAccountRepository: DeleteAccountRepository) : DeleteAccountUseCase{
+        return DeleteAccountUseCase(deleteAccountRepository)
     }
 
     @Provides
@@ -211,5 +260,9 @@ object RetrofitModule {
         return DeleteListingUseCase(deleteListingRepository)
     }
 
+    @Provides
+    fun providesGetCategoriesData(getCategoriesDataRepository: GetCategoriesDataRepository): GetCategoriesDataUseCase{
+        return GetCategoriesDataUseCase(getCategoriesDataRepository)
+    }
 
 }

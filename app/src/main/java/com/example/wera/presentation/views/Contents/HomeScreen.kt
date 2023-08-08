@@ -62,18 +62,18 @@ fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsVi
                 Card(modifier = Modifier.weight(1f), elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)) {
                     Column(
                         modifier = Modifier.padding(16.dp)
-                            .clickable { onCardClicked(process.id) },
+                            .clickable { process.id?.let { onCardClicked(it) } },
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image")
                         Text(text = "Name",style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                        Text(text = process.name )
+                        process.name?.let { Text(text = it) }
                         Text(text = "Description", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                        Text(text = process.description)
+                        process.description?.let { Text(text = it) }
                         Text(text = "Category", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                        Text(text = process.category)
+                        process.category?.let { Text(text = it) }
                         Text(text = "Amount", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                        Text(text = process.amount)
+                        process.amount?.let { Text(text = it) }
                         // Add other content for the card here
                     }
                 }
@@ -83,18 +83,18 @@ fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsVi
                     Card(modifier = Modifier.weight(1f), elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)) {
                         Column(
                             modifier = Modifier.padding(16.dp)
-                                .clickable { onCardClicked(process2.id) },
+                                .clickable { process2.id?.let { onCardClicked(it) } },
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image")
                             Text(text = "Name", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                            Text(text = process2.name)
+                            process2.name?.let { Text(text = it) }
                             Text(text = "Description", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                            Text(text = process2.description)
+                            process2.description?.let { Text(text = it) }
                             Text(text = "Category", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                            Text(text = process2.category)
+                            process2.category?.let { Text(text = it) }
                             Text(text = "Amount", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp))
-                            Text(text = process2.amount)
+                            process2.amount?.let { Text(text = it) }
                             // Add content for the second card here
                         }
                     }

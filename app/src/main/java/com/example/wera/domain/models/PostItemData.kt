@@ -5,7 +5,8 @@ data class PostItemData(
     val description : String,
     val location : String,
     val amount : String,
-    val category : String
+    val category : Int,
+    val status : Int
 )
 
 data class PostItemResponse(

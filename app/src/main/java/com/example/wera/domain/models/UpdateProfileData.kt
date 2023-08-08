@@ -1,14 +1,14 @@
 package com.example.wera.domain.models
 
-import java.io.File
+import okhttp3.MultipartBody
 
 data class UpdateProfileData(
     val name: String,
     val email:String,
     val phone:String,
     val bio: String,
-    val occupation : String,
-//    val profile: File
+    val occupation: String,
+    val profile: MultipartBody.Part
 
 )
 

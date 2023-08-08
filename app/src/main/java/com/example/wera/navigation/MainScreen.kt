@@ -33,10 +33,14 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.wera.presentation.viewModel.DeleteAccountViewModel
+import com.example.wera.presentation.viewModel.DeleteListingViewModel
+import com.example.wera.presentation.viewModel.GetCategoriesViewModel
 import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
+import com.example.wera.presentation.viewModel.LogoutViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 
@@ -48,7 +52,11 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                 updateProfileViewModel: UpdateProfileViewModel,
                getUserViewModel : GetUserViewModel,
                getUserListingsViewModel : GetUserListingsViewModel,
-               getIndividualItemViewModel: GetIndividualItemViewModel
+               getIndividualItemViewModel: GetIndividualItemViewModel,
+               deleteListingViewModel : DeleteListingViewModel,
+               getCategoriesViewModel : GetCategoriesViewModel,
+               logoutViewModel :LogoutViewModel,
+               deleteAccountViewModel: DeleteAccountViewModel
 ){
     val navController = rememberNavController()
 
@@ -68,7 +76,11 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                 updateProfileViewModel = updateProfileViewModel,
                 getUserViewModel = getUserViewModel,
                 getUserListingsViewModel = getUserListingsViewModel,
-                getIndividualItemViewModel = getIndividualItemViewModel
+                getIndividualItemViewModel = getIndividualItemViewModel,
+                deleteListingViewModel = deleteListingViewModel,
+                getCategoriesViewModel = getCategoriesViewModel,
+                logoutViewModel = logoutViewModel,
+                deleteAccountViewModel = deleteAccountViewModel
             )
 
         }

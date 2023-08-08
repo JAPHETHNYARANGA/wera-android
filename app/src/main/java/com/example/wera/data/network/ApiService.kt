@@ -1,11 +1,13 @@
 package com.example.wera.data.network
 
+import com.example.wera.domain.models.Categories
 import com.example.wera.domain.models.DeleteListingResponse
 import com.example.wera.domain.models.GetUserData
 import com.example.wera.domain.models.IndividualListing
 import com.example.wera.domain.models.Listings
 import com.example.wera.domain.models.ListingsData
 import com.example.wera.domain.models.LoginResponse
+import com.example.wera.domain.models.LogoutResponse
 import com.example.wera.domain.models.PostItemData
 import com.example.wera.domain.models.PostItemResponse
 import com.example.wera.domain.models.RegisterRequest
@@ -28,6 +30,16 @@ interface RegisterUser{
 interface LoginUser{
     @POST("login")
     suspend fun login(@Body userLogin : UserLogin): Response<LoginResponse>
+}
+
+interface Logout {
+    @POST("logout")
+    suspend fun logout(): Response<LogoutResponse>
+}
+
+interface DeleteAccount{
+    @GET("deleteUser")
+    suspend fun deleteAccount() : Response<LogoutResponse>
 }
 
 interface PostItem{
@@ -67,4 +79,7 @@ interface GetUser{
     suspend fun getUser() : GetUserData
 }
 
-
+interface GetCategories{
+    @GET("category")
+    suspend fun getCategories() : Categories
+}

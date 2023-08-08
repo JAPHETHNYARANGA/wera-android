@@ -1,7 +1,6 @@
 package com.example.wera.presentation.views.Contents.Profile
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -24,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,35 +36,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.wera.R
 import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
-import com.example.wera.presentation.views.Authentication.PasswordVisualTransformation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -91,6 +90,25 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
         }
+
+    // Create a CoroutineScope for managing coroutines
+    val scope = rememberCoroutineScope()
+
+    // Function to convert the selected image URI to a Bitmap
+    fun convertUriToBitmap(uri: Uri): Bitmap? {
+        return try {
+            if (Build.VERSION.SDK_INT < 28) {
+                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+            } else {
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        } catch (e: IOException) {
+            Log.e("EditProfile", "Error converting URI to Bitmap: ${e.message}")
+            null
+        }
+    }
+
 
 
 
@@ -136,7 +154,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                 Spacer(modifier = Modifier.height(10.dp))
                 IconButton(
                     onClick = {
-                        // Launch the image picker when the "+" icon is clicked
                         launcher.launch("image/*")
                     }
                 ) {
@@ -191,6 +208,7 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                         focusedBorderColor = Color(0xFF1A202C),
                         unfocusedBorderColor = Color(0xFF1A202C)
                     ),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
                     modifier = Modifier
                         .fillMaxWidth()
                         .onFocusChanged {
@@ -233,36 +251,56 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                         }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
+
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
-                                     if(name.isNotEmpty() && name.isNotEmpty() && email.isNotEmpty() && bio.isNotEmpty() && occupation.isNotEmpty()){
-                                         CoroutineScope(Dispatchers.Main).launch {
-                                             try{
-                                                 updateProfileViewModel.updateProfile(
-                                                     name, email, phone, bio, occupation
-                                                 )?.let {response ->
-                                                     Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-                                                     if (response.success){
-                                                         navController.navigate( BottomBarScreen.Profile.route)
-                                                         getUserViewModel.fetchProfile()
-                                                     }else{
-                                                         Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-                                                     }
-                                                 }
+                        // Check if all required fields are not empty
+                        if (name.isNotEmpty() && email.isNotEmpty() && bio.isNotEmpty() && occupation.isNotEmpty()) {
+                            // Convert the selected image URI to Bitmap
+                            val selectedBitmap = imageUri?.let { convertUriToBitmap(it) }
 
-                                             } catch (e: Exception) {
-                                    Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-                                    Log.d("Profile Update","${e.message}")
-                                    e.printStackTrace()
+                            // Check if the Bitmap is not null
+                            if (selectedBitmap != null) {
+                                // Convert Bitmap to ByteArray
+                                val byteArrayOutputStream = ByteArrayOutputStream()
+                                selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                                val byteArray = byteArrayOutputStream.toByteArray()
+
+                                // Create a multipart request body with the user profile data and image
+                                val requestBuilder = RequestBody.create("image/*".toMediaTypeOrNull(), byteArray)
+                                val imageBody = MultipartBody.Part.createFormData("profile_image", "profile_image.jpg", requestBuilder)
+
+                                // Send the API request to update the user profile with the image
+                                scope.launch {
+                                    try {
+                                        val response = updateProfileViewModel.updateProfile(
+                                            name, email, phone, bio, occupation, imageBody
+                                        )
+
+                                        // Handle the API response here (e.g., show toast message)
+                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+
+                                        if (response.success) {
+                                            navController.navigate(BottomBarScreen.Profile.route)
+                                            getUserViewModel.fetchProfile()
+                                        }
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                                        Log.d("Profile Update", "${e.message}")
+                                        e.printStackTrace()
+                                    }
                                 }
-                                         }
-                                     }
-
+                            }
+                        } else {
+                            // Show a message indicating that all required fields must be filled
+                            Toast.makeText(context, "Please fill all required fields", Toast.LENGTH_LONG).show()
+                        }
                     }, modifier = Modifier.fillMaxWidth()) {
                         Text(text = "Update")
                     }
                 }
             }
+
         }
 
     }

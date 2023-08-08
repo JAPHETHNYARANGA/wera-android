@@ -29,11 +29,13 @@ class PostItemViewModel @Inject constructor(private val postItemUseCase: PostIte
         description : String,
         location : String,
         amount : String,
-        category : String
+        category : Int,
+        status : Int
 
     ) : PostItemResponse{
         try {
-            return postItemUseCase.postItemUseCase(name, description, location, amount, category)
+            return postItemUseCase.postItemUseCase(name, description, location, amount, category, status)
+
         }catch (e: SocketTimeoutException) {
             Log.d("exception", "Timeout Exception")
             throw LoginException("Request timed out")
