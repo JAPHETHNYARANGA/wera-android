@@ -3,6 +3,7 @@ package com.example.wera
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -32,6 +33,7 @@ import com.example.wera.presentation.views.Authentication.LoginScreen
 import com.example.wera.presentation.views.Authentication.RegisterScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.ui.theme.WeraTheme
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -64,6 +66,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
+
 
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {

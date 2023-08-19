@@ -58,11 +58,10 @@ import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -257,28 +256,37 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                         // Check if all required fields are not empty
                         if (name.isNotEmpty() && email.isNotEmpty() && bio.isNotEmpty() && occupation.isNotEmpty()) {
                             // Convert the selected image URI to Bitmap
-                            val selectedBitmap = imageUri?.let { convertUriToBitmap(it) }
+                            val selectedFile = imageUri?.let { uri ->
+                                File(uri.path)
+                            }
 
                             // Check if the Bitmap is not null
-                            if (selectedBitmap != null) {
+                            if (selectedFile != null) {
                                 // Convert Bitmap to ByteArray
-                                val byteArrayOutputStream = ByteArrayOutputStream()
-                                selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-                                val byteArray = byteArrayOutputStream.toByteArray()
+                                val requestBuilder = selectedFile?.let {
+                                    RequestBody.create("image/*".toMediaTypeOrNull(),
+                                        it
+                                    )
+                                }
 
-                                // Create a multipart request body with the user profile data and image
-                                val requestBuilder = RequestBody.create("image/*".toMediaTypeOrNull(), byteArray)
-                                val imageBody = MultipartBody.Part.createFormData("profile_image", "profile_image.jpg", requestBuilder)
+                                // Create the MultipartBody.Part
+                                val imageBody = requestBuilder?.let {
+                                    MultipartBody.Part.createFormData("profile_image", selectedFile.name,
+                                        it
+                                    )
+                                }
 
                                 // Send the API request to update the user profile with the image
                                 scope.launch {
                                     try {
-                                        val response = updateProfileViewModel.updateProfile(
-                                            name, email, phone, bio, occupation, imageBody
-                                        )
+                                        val response = imageBody?.let {
+                                            updateProfileViewModel.updateProfile(
+                                                name, email, phone, bio, occupation, it
+                                            )
+                                        }
 
                                         // Handle the API response here (e.g., show toast message)
-                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, response!!.message, Toast.LENGTH_LONG).show()
 
                                         if (response.success) {
                                             navController.navigate(BottomBarScreen.Profile.route)
