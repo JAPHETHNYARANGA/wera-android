@@ -1,5 +1,7 @@
 package com.example.wera.presentation.views.Contents.Profile
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -57,13 +59,14 @@ import com.example.wera.R
 import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
+
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -93,6 +96,9 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
 
     // Create a CoroutineScope for managing coroutines
     val scope = rememberCoroutineScope()
+
+
+
 
     // Function to convert the selected image URI to a Bitmap
     fun convertUriToBitmap(uri: Uri): Bitmap? {
@@ -254,31 +260,102 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
+
                         // Check if all required fields are not empty
                         if (name.isNotEmpty() && email.isNotEmpty() && bio.isNotEmpty() && occupation.isNotEmpty()) {
                             // Convert the selected image URI to Bitmap
-                            val selectedBitmap = imageUri?.let { convertUriToBitmap(it) }
+//                            val selectedFile = imageUri?.let { uri ->
+//                                File(uri.path)
+//                            }
+                            val selectedFile = imageUri?.let { uri ->
+                                try {
+                                    val inputStream = context.contentResolver.openInputStream(uri)
+                                    val byteArray = inputStream?.readBytes()
+                                    inputStream?.close()
+
+                                    if (byteArray != null) {
+                                        // Save the ByteArray to a temporary file
+                                        val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
+                                        tempFile.writeBytes(byteArray)
+                                        tempFile
+                                    } else {
+                                        null
+                                    }
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+
 
                             // Check if the Bitmap is not null
-                            if (selectedBitmap != null) {
+                            if (selectedFile != null) {
                                 // Convert Bitmap to ByteArray
-                                val byteArrayOutputStream = ByteArrayOutputStream()
-                                selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-                                val byteArray = byteArrayOutputStream.toByteArray()
+                                val requestBuilder = selectedFile?.let {
+                                    RequestBody.create("image/*".toMediaTypeOrNull(),
+                                        it
+                                    )
+                                }
 
-                                // Create a multipart request body with the user profile data and image
-                                val requestBuilder = RequestBody.create("image/*".toMediaTypeOrNull(), byteArray)
-                                val imageBody = MultipartBody.Part.createFormData("profile_image", "profile_image.jpg", requestBuilder)
+                                // Create the MultipartBody.Part
+                                val imageBody = requestBuilder?.let {
+                                    MultipartBody.Part.createFormData("profile_image", selectedFile.name,
+                                        it
+                                    )
+                                }
 
+                                // Get a reference to Firebase Storage
+                                val storage = FirebaseStorage.getInstance()
+                                val storageRef = storage.reference
+
+
+
+                                // Initialize shared preferences
+                                val sharedPreferences = context.getSharedPreferences("userIdPreference", Context.MODE_PRIVATE)
+
+                                val userId = sharedPreferences.getString("userIdPreference", "")
+                                Log.d("sharedPreferences", "userId:${userId}")
+
+                                // Generate a unique name for the image file using the current timestamp
+                                val fileName = "profile_${System.currentTimeMillis()}.jpg"
+                                val imageRef = storageRef.child("profile_images/$userId/$fileName")
+
+                                // Upload the image to Firebase Storage
+                                val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+
+
+                                uploadTask.continueWithTask { task ->
+                                    if (!task.isSuccessful) {
+                                        task.exception?.let {
+                                            throw it
+                                        }
+                                    }
+                                    imageRef.downloadUrl
+                                }.addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        val imageUrl = task.result.toString()
+                                        Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
+
+                                    } else {
+                                        // Handle unsuccessful image upload
+                                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                uploadTask.addOnFailureListener { exception ->
+                                    Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
+                                    Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
+                                }
                                 // Send the API request to update the user profile with the image
                                 scope.launch {
                                     try {
-                                        val response = updateProfileViewModel.updateProfile(
-                                            name, email, phone, bio, occupation, imageBody
-                                        )
+                                        val response = imageBody?.let {
+                                            updateProfileViewModel.updateProfile(
+                                                name, email, phone, bio, occupation, it
+                                            )
+                                        }
 
                                         // Handle the API response here (e.g., show toast message)
-                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, response!!.message, Toast.LENGTH_LONG).show()
 
                                         if (response.success) {
                                             navController.navigate(BottomBarScreen.Profile.route)

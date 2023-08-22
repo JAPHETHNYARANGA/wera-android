@@ -6,6 +6,7 @@ import com.example.wera.data.network.DeleteAccount
 import com.example.wera.data.network.DeleteListing
 import com.example.wera.data.network.GetCategories
 import com.example.wera.data.network.GetIndividualListing
+import com.example.wera.data.network.GetMessages
 import com.example.wera.data.network.GetPosts
 import com.example.wera.data.network.GetUser
 import com.example.wera.data.network.GetUserListings
@@ -22,6 +23,7 @@ import com.example.wera.domain.repository.DeleteListingRepository
 import com.example.wera.domain.repository.GetCategoriesDataRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
 import com.example.wera.domain.repository.GetListingsRepository
+import com.example.wera.domain.repository.GetMessagesRepository
 import com.example.wera.domain.repository.GetUserListingsRepository
 import com.example.wera.domain.repository.GetUserRepository
 import com.example.wera.domain.repository.LoginUserRepository
@@ -33,6 +35,7 @@ import com.example.wera.domain.useCase.DeleteListingUseCase
 import com.example.wera.domain.useCase.GetCategoriesDataUseCase
 import com.example.wera.domain.useCase.GetIndividualItemUseCase
 import com.example.wera.domain.useCase.GetListingUseCase
+import com.example.wera.domain.useCase.GetMessagesUseCase
 import com.example.wera.domain.useCase.GetUserListingsUseCase
 import com.example.wera.domain.useCase.GetUserUseCase
 import com.example.wera.domain.useCase.LoginUserUseCase
@@ -83,7 +86,8 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://67ca-197-139-44-10.ngrok-free.app/api/")
+
+            .baseUrl("https://d03d-196-216-70-170.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -150,6 +154,11 @@ object RetrofitModule {
         return retrofit.create(GetCategories::class.java)
     }
 
+    @Provides
+    fun providesMessagesData(retrofit: Retrofit) : GetMessages{
+        return retrofit.create(GetMessages::class.java)
+    }
+
     //Repository
 
     @Provides
@@ -208,6 +217,11 @@ object RetrofitModule {
         return GetCategoriesDataRepository(getCategories)
     }
 
+    @Provides
+    fun providesGetMessagesRepository(getMessages: GetMessages) : GetMessagesRepository{
+        return GetMessagesRepository(getMessages)
+    }
+
     //UseCase
 
     @Provides
@@ -263,6 +277,11 @@ object RetrofitModule {
     @Provides
     fun providesGetCategoriesData(getCategoriesDataRepository: GetCategoriesDataRepository): GetCategoriesDataUseCase{
         return GetCategoriesDataUseCase(getCategoriesDataRepository)
+    }
+
+    @Provides
+    fun providesMessagesUseCase(getMessagesRepository: GetMessagesRepository) : GetMessagesUseCase{
+        return GetMessagesUseCase(getMessagesRepository)
     }
 
 }

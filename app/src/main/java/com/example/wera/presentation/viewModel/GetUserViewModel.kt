@@ -1,5 +1,7 @@
 package com.example.wera.presentation.viewModel
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,12 +19,14 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class GetUserViewModel @Inject constructor(private val getUserRepository: GetUserRepository) : ViewModel() {
+class GetUserViewModel @Inject constructor(private val getUserRepository: GetUserRepository,  private val sharedPreferences: SharedPreferences) : ViewModel() {
     private val _user = MutableStateFlow<UserProfile?>(null)
     val userDisplay: StateFlow<UserProfile?> = _user
     private val _isRefreshing = MutableStateFlow(false)
+//    private lateinit var sharedPreferences: SharedPreferences
 
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
+
 
     init {
         fetchProfile()
@@ -35,6 +39,8 @@ class GetUserViewModel @Inject constructor(private val getUserRepository: GetUse
                 val profileData: GetUserData = getUserRepository.getUserProfile()
                 val user: UserProfile? = profileData.user
                 _user.value = user
+
+
             } catch (e: Exception) {
                 Log.d("Failure fetching Profile data", "${e.message}")
             } finally {
