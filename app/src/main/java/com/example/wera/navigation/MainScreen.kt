@@ -13,16 +13,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDefaults.contentColor
+import androidx.compose.material3.TabRowDefaults.contentColor
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -33,6 +41,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.wera.R
 import com.example.wera.presentation.viewModel.DeleteAccountViewModel
 import com.example.wera.presentation.viewModel.DeleteListingViewModel
 import com.example.wera.presentation.viewModel.GetCategoriesViewModel
@@ -41,6 +50,7 @@ import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LogoutViewModel
+import com.example.wera.presentation.viewModel.MessagesViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 
@@ -48,6 +58,7 @@ import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 @Composable
 fun MainScreen(postItemViewModel : PostItemViewModel,
                sharedPreferences : SharedPreferences,
+               sharedUserPreferences : SharedPreferences,
                getListingsViewModel : GetListingsViewModel,
                 updateProfileViewModel: UpdateProfileViewModel,
                getUserViewModel : GetUserViewModel,
@@ -56,7 +67,8 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                deleteListingViewModel : DeleteListingViewModel,
                getCategoriesViewModel : GetCategoriesViewModel,
                logoutViewModel :LogoutViewModel,
-               deleteAccountViewModel: DeleteAccountViewModel
+               deleteAccountViewModel: DeleteAccountViewModel,
+               messagesViewModel :MessagesViewModel
 ){
     val navController = rememberNavController()
 
@@ -64,6 +76,7 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
 
     Scaffold (
         modifier = Modifier.fillMaxWidth(),
+
         bottomBar = { BottomBar(navController = navController)}
             ){
         Column(modifier = Modifier
@@ -72,6 +85,7 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
             BottomNavGraph(navController = navController,
                 postItemViewModel = postItemViewModel,
                 sharedPreferences = sharedPreferences,
+                sharedUserPreferences = sharedUserPreferences,
                 getListingsViewModel = getListingsViewModel,
                 updateProfileViewModel = updateProfileViewModel,
                 getUserViewModel = getUserViewModel,
@@ -80,7 +94,8 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                 deleteListingViewModel = deleteListingViewModel,
                 getCategoriesViewModel = getCategoriesViewModel,
                 logoutViewModel = logoutViewModel,
-                deleteAccountViewModel = deleteAccountViewModel
+                deleteAccountViewModel = deleteAccountViewModel,
+                messagesViewModel = messagesViewModel
             )
 
         }
@@ -156,11 +171,6 @@ fun AddItem(
                 contentDescription = "icon",
                 tint = contentColor
             )
-//            AnimatedVisibility(visible = selected) {
-//                Text(text = screen.title,
-//                color = contentColor)
-//
-//            }
         }
     }
 }

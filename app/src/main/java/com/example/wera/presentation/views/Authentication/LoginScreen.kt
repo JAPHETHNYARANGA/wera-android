@@ -160,11 +160,20 @@ fun LoginScreen(
                                           Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
 
                                           if (response.success) {
+
                                               val editor = sharedPreferences.edit()
                                               editor.putString("loginPreference", response.token)
                                               editor.apply()
+
+                                              val userId = sharedPreferences.edit()
+                                              userId.putString("userIdPreference", response.user.userId)
+                                              userId.apply()
+
                                               val intent = Intent(context, MainActivity::class.java)
                                               context.startActivity(intent)
+
+
+                                            
                                           } else {
                                               Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                                           }

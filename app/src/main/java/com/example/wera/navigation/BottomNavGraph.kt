@@ -13,6 +13,7 @@ import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LogoutViewModel
+import com.example.wera.presentation.viewModel.MessagesViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 import com.example.wera.presentation.views.Contents.FavoritesScreen
@@ -28,6 +29,7 @@ fun BottomNavGraph(
     navController : NavHostController,
     postItemViewModel : PostItemViewModel,
     sharedPreferences : SharedPreferences,
+    sharedUserPreferences : SharedPreferences,
     getListingsViewModel: GetListingsViewModel,
     updateProfileViewModel: UpdateProfileViewModel,
     getUserViewModel : GetUserViewModel,
@@ -36,7 +38,8 @@ fun BottomNavGraph(
     deleteListingViewModel: DeleteListingViewModel,
     getCategoriesViewModel: GetCategoriesViewModel,
     logoutViewModel :LogoutViewModel,
-    deleteAccountViewModel: DeleteAccountViewModel
+    deleteAccountViewModel: DeleteAccountViewModel,
+    messagesViewModel : MessagesViewModel
 ){
 
     NavHost(
@@ -55,7 +58,7 @@ fun BottomNavGraph(
 
         composable(route =BottomBarScreen.Messages.route)
         {
-            MessagesScreen()
+            MessagesScreen(messagesViewModel)
         }
 
         composable(route =BottomBarScreen.Profile.route)

@@ -8,6 +8,7 @@ import com.example.wera.domain.models.Listings
 import com.example.wera.domain.models.ListingsData
 import com.example.wera.domain.models.LoginResponse
 import com.example.wera.domain.models.LogoutResponse
+import com.example.wera.domain.models.Messages
 import com.example.wera.domain.models.PostItemData
 import com.example.wera.domain.models.PostItemResponse
 import com.example.wera.domain.models.RegisterRequest
@@ -82,4 +83,10 @@ interface GetUser{
 interface GetCategories{
     @GET("category")
     suspend fun getCategories() : Categories
+}
+
+//messages
+interface GetMessages{
+    @GET("messages")
+    suspend fun getMessages() : Messages
 }

@@ -3,7 +3,7 @@ package com.example.wera
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,6 +26,7 @@ import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LoginUserViewModel
 import com.example.wera.presentation.viewModel.LogoutViewModel
+import com.example.wera.presentation.viewModel.MessagesViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
 import com.example.wera.presentation.viewModel.RegisterUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
@@ -33,7 +34,6 @@ import com.example.wera.presentation.views.Authentication.LoginScreen
 import com.example.wera.presentation.views.Authentication.RegisterScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.ui.theme.WeraTheme
-import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
     private val getCategoriesViewModel : GetCategoriesViewModel by viewModels()
     private val logoutViewModel : LogoutViewModel by viewModels()
     private val deleteAccountViewModel : DeleteAccountViewModel by viewModels()
+    private val messagesViewModel : MessagesViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,16 +64,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val preferences = getSharedPreferences("userIdPreference", Context.MODE_PRIVATE)
+                    Toast.makeText(this,"${ preferences.getString("userIdPreference", "")}", Toast.LENGTH_LONG).show()
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
+                    val sharedUserPreferences = getSharedPreferences("userId", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
-
 
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
-                            MainScreen(postItemViewModel, sharedPreferences, getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
-                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel)
+                            MainScreen(postItemViewModel, sharedPreferences, sharedUserPreferences, getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
+                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel)
                         }
 
                         composable("edit") {
