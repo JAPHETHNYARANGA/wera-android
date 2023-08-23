@@ -1,5 +1,6 @@
 package com.example.wera.presentation.viewModel
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,16 +23,20 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class UpdateProfileViewModel @Inject constructor(private val updateProfileUseCase: UpdateProfileUseCase, private val getUserRepository: GetUserRepository) : ViewModel(){
+class UpdateProfileViewModel @Inject constructor(
+    private val updateProfileUseCase: UpdateProfileUseCase,
+    private val getUserRepository: GetUserRepository,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel(){
+
     private val _updateItem = MutableLiveData<UpdateProfileResponse>()
     private val _isRefreshing = MutableStateFlow(false)
     private val _user = MutableStateFlow<UserProfile?>(null)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
-
     val updateProfile : LiveData<UpdateProfileResponse> get() = _updateItem
-
     private val _updateProfileSuccess = MutableLiveData<Boolean>()
     val updateProfileSuccess : LiveData<Boolean> get() = _updateProfileSuccess
+    val userId = sharedPreferences.getString("userIdPreference", "") ?: ""
 
     init {
         fetchProfile()
@@ -44,7 +49,6 @@ class UpdateProfileViewModel @Inject constructor(private val updateProfileUseCas
                 val profileData: GetUserData = getUserRepository.getUserProfile()
                 val user: UserProfile? = profileData.user
                 _user.value = user
-
 
             } catch (e: Exception) {
                 Log.d("Failure fetching Profile data", "${e.message}")

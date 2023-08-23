@@ -60,6 +60,8 @@ import com.example.wera.R
 import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -101,36 +103,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
 
     // Create a CoroutineScope for managing coroutines
     val scope = rememberCoroutineScope()
-
-
-    // Update the fields when user data changes
-    userData?.let {
-        name = it.name ?: ""
-        email = it.email ?: ""
-        phone = it.phone ?: ""
-        bio = it.bio ?: ""
-        occupation = it.occupation ?: ""
-    }
-
-
-
-    // Function to convert the selected image URI to a Bitmap
-    fun convertUriToBitmap(uri: Uri): Bitmap? {
-        return try {
-            if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-            } else {
-                val source = ImageDecoder.createSource(context.contentResolver, uri)
-                ImageDecoder.decodeBitmap(source)
-            }
-        } catch (e: IOException) {
-            Log.e("EditProfile", "Error converting URI to Bitmap: ${e.message}")
-            null
-        }
-    }
-
-
-
 
     Column(
         modifier = Modifier
@@ -277,10 +249,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
 
                         // Check if all required fields are not empty
                         if (name.isNotEmpty() && email.isNotEmpty() && bio.isNotEmpty() && occupation.isNotEmpty()) {
-                            // Convert the selected image URI to Bitmap
-//                            val selectedFile = imageUri?.let { uri ->
-//                                File(uri.path)
-//                            }
                             val selectedFile = imageUri?.let { uri ->
                                 try {
                                     val inputStream = context.contentResolver.openInputStream(uri)
@@ -299,8 +267,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                     null
                                 }
                             }
-
-
                             // Check if the Bitmap is not null
                             if (selectedFile != null) {
                                 // Convert Bitmap to ByteArray
@@ -321,44 +287,58 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                 val storage = FirebaseStorage.getInstance()
                                 val storageRef = storage.reference
 
-
-
                                 // Initialize shared preferences
-                                val sharedPreferences = context.getSharedPreferences("userIdPreference", Context.MODE_PRIVATE)
-
-                                val userId = sharedPreferences.getString("userIdPreference", "")
-                                Log.d("sharedPreferences", "userId:${userId}")
+                                val userId = updateProfileViewModel.userId
 
                                 // Generate a unique name for the image file using the current timestamp
                                 val fileName = "profile_${System.currentTimeMillis()}.jpg"
                                 val imageRef = storageRef.child("profile_images/$userId/$fileName")
 
-                                // Upload the image to Firebase Storage
-                                val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+                                val existingImageRef = storageRef.child("profile_images/$userId")
 
+                                existingImageRef.listAll().addOnSuccessListener { listResult ->
+                                    val allTasks = mutableListOf<Task<Void>>()
+                                    listResult.items.forEach { item ->
+                                        val deleteTask = item.delete()
+                                        allTasks.add(deleteTask)
+                                    }
 
-                                uploadTask.continueWithTask { task ->
-                                    if (!task.isSuccessful) {
-                                        task.exception?.let {
-                                            throw it
+                                    Tasks.whenAllComplete(allTasks).addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Log.d("FirebaseStorage", "All images inside folder deleted successfully")
+                                            // Upload the image to Firebase Storage
+                                            val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+
+                                            uploadTask.continueWithTask { task ->
+                                                if (!task.isSuccessful) {
+                                                    task.exception?.let {
+                                                        throw it
+                                                    }
+                                                }
+                                                imageRef.downloadUrl
+                                            }.addOnCompleteListener { task ->
+                                                if (task.isSuccessful) {
+                                                    val imageUrl = task.result.toString()
+                                                    Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
+
+                                                } else {
+                                                    // Handle unsuccessful image upload
+                                                    Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+
+                                            uploadTask.addOnFailureListener { exception ->
+                                                Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
+                                                Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        } else {
+                                            Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
                                         }
                                     }
-                                    imageRef.downloadUrl
-                                }.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        val imageUrl = task.result.toString()
-                                        Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
-
-                                    } else {
-                                        // Handle unsuccessful image upload
-                                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
-                                    }
+                                }.addOnFailureListener { exception ->
+                                    Log.e("FirebaseStorage", "Failed to list items in folder: $exception")
                                 }
 
-                                uploadTask.addOnFailureListener { exception ->
-                                    Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
-                                    Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
-                                }
                                 // Send the API request to update the user profile with the image
                                 scope.launch {
                                     try {
