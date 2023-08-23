@@ -1,6 +1,7 @@
 package com.example.wera.presentation.viewModel
 
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MessagesViewModel @Inject constructor(private val getMessagesUseCase: GetMessagesUseCase) : ViewModel(){
+class MessagesViewModel @Inject constructor(
+    private val getMessagesUseCase: GetMessagesUseCase,
+                                            private val sharedPreferences: SharedPreferences
+) : ViewModel(){
     private val _messages = MutableStateFlow(emptyList<message>())
     val showMessages : MutableStateFlow<List<message>> get() = _messages
     private val _isRefreshing = MutableStateFlow(false)
@@ -30,7 +34,12 @@ class MessagesViewModel @Inject constructor(private val getMessagesUseCase: GetM
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     _isRefreshing.value = true
-                    val messagesData = getMessagesUseCase.getMessagesUseCase()
+                    // After retrieving the userId from SharedPreferences
+                    val userId = sharedPreferences.getString("userIdPreference", "") ?: ""
+
+
+                    // Make the network request using the userId as a query parameter
+                    val messagesData = getMessagesUseCase.getMessagesUseCase(userId)
                     val messages = messagesData.messages
                     _messages.value = messages
                 }catch (e: Exception){

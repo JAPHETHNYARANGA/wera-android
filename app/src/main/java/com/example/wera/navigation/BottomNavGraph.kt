@@ -29,7 +29,6 @@ fun BottomNavGraph(
     navController : NavHostController,
     postItemViewModel : PostItemViewModel,
     sharedPreferences : SharedPreferences,
-    sharedUserPreferences : SharedPreferences,
     getListingsViewModel: GetListingsViewModel,
     updateProfileViewModel: UpdateProfileViewModel,
     getUserViewModel : GetUserViewModel,

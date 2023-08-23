@@ -68,13 +68,12 @@ class MainActivity : ComponentActivity() {
                     Toast.makeText(this,"${ preferences.getString("userIdPreference", "")}", Toast.LENGTH_LONG).show()
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
-                    val sharedUserPreferences = getSharedPreferences("userId", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
 
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
-                            MainScreen(postItemViewModel, sharedPreferences, sharedUserPreferences, getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
+                            MainScreen(postItemViewModel, sharedPreferences,  getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
                             , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel)
                         }
 

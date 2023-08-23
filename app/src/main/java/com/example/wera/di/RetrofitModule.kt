@@ -61,6 +61,7 @@ import javax.inject.Singleton
 object RetrofitModule {
 
 
+
     @Singleton
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
@@ -86,8 +87,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-
-            .baseUrl("https://d03d-196-216-70-170.ngrok-free.app/api/")
+            .baseUrl("https://744c-196-216-70-170.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

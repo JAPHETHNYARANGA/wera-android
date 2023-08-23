@@ -5,8 +5,8 @@ import com.example.wera.domain.models.Messages
 import javax.inject.Inject
 
 class GetMessagesRepository @Inject constructor(private val getMessages: GetMessages) {
-    suspend fun getMessages() : Messages{
-        return getMessages.getMessages()
+    suspend fun getMessages(userId: String): Messages{
+        return getMessages.getMessages(userId)
     }
 }
 

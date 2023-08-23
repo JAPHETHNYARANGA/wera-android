@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,11 +73,15 @@ import java.io.IOException
 @Composable
 fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProfileViewModel, getUserViewModel:GetUserViewModel){
 
-    var email by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var bio  by remember { mutableStateOf("") }
-    var occupation by remember { mutableStateOf("") }
+    // Get the user data from the ViewModel
+    val userData by getUserViewModel.userDisplay.collectAsState()
+
+    // Initialize state variables with user data
+    var name by remember { mutableStateOf(userData?.name ?: "") }
+    var email by remember { mutableStateOf(userData?.email ?: "") }
+    var phone by remember { mutableStateOf(userData?.phone ?: "") }
+    var bio by remember { mutableStateOf(userData?.bio ?: "") }
+    var occupation by remember { mutableStateOf(userData?.occupation ?: "") }
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -97,6 +102,15 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
     // Create a CoroutineScope for managing coroutines
     val scope = rememberCoroutineScope()
 
+
+    // Update the fields when user data changes
+    userData?.let {
+        name = it.name ?: ""
+        email = it.email ?: ""
+        phone = it.phone ?: ""
+        bio = it.bio ?: ""
+        occupation = it.occupation ?: ""
+    }
 
 
 
