@@ -136,21 +136,7 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image",  modifier = Modifier.size(50.dp))
-//                        Image(
-//                            painter = painter,
-//                            contentDescription = contentDescription,
-//                            modifier = Modifier.fillMaxSize(),
-//                            contentScale = ContentScale.Crop,
-//                            // Use CoilImage or another image loading library to load the image
-//                            content = {
-//                                CoilImage(
-//                                    data = imageUri, // Provide the image URL here
-//                                    contentDescription = contentDescription,
-//                                    modifier = Modifier.fillMaxSize(),
-//                                    contentScale = ContentScale.Crop
-//                                )
-//                            }
-//                        )
+
                         process.name?.let {
                             Text(
                                 text = it,

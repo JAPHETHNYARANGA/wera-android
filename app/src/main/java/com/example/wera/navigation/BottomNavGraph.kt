@@ -19,6 +19,7 @@ import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 import com.example.wera.presentation.views.Contents.FavoritesScreen
 import com.example.wera.presentation.views.Contents.HomeScreen
 import com.example.wera.presentation.views.Contents.IndividualItemPage
+import com.example.wera.presentation.views.Contents.Messages.createMessagesPage
 import com.example.wera.presentation.views.Contents.MessagesScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.presentation.views.Contents.Profile.ProfilePage
@@ -57,7 +58,12 @@ fun BottomNavGraph(
 
         composable(route =BottomBarScreen.Messages.route)
         {
-            MessagesScreen(messagesViewModel)
+            MessagesScreen(navController, messagesViewModel)
+        }
+
+        composable(route = BottomBarScreen.CreateMessage.route)
+        {
+            createMessagesPage(navController)
         }
 
         composable(route =BottomBarScreen.Profile.route)
@@ -74,6 +80,8 @@ fun BottomNavGraph(
         {
             IndividualItemPage(navController , sharedPreferences, getIndividualItemViewModel )
         }
+
+
     }
 
 }
