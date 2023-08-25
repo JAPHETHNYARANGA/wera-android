@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.wera.MainActivity
 import com.example.wera.R
 import com.example.wera.navigation.BottomBarScreen
@@ -65,6 +66,7 @@ import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LogoutViewModel
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -94,6 +96,24 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
         Row(modifier = Modifier
             .padding(top = 20.dp, bottom = 20.dp)
             .fillMaxWidth() , horizontalArrangement =  Arrangement.Center) {
+
+            //                        val imageUrl = userData?.profile
+//
+//                        // Use the URL directly, don't convert it to string
+////                        val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(
+////                            imageUrl!!
+////                        )
+//                        val storageReference = imageUrl?.let {
+//                            FirebaseStorage.getInstance().reference.child(
+//                                it
+//                            )
+//                        }
+//                        val downloadUrlTask = storageReference?.downloadUrl
+//
+//                        // This will trigger the image loading and caching process using Coil
+//                        val painter = rememberImagePainter(data = downloadUrlTask?.result.toString())
+//                        Image( painter = painter, contentDescription = "Icon Image",  modifier = Modifier.size(50.dp))
+//
             CircularImage(painter = painterResource(id = R.drawable.worker), contentDescription = "Profile Image")
         }
 
@@ -135,7 +155,6 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image",  modifier = Modifier.size(50.dp))
 
                         process.name?.let {
                             Text(

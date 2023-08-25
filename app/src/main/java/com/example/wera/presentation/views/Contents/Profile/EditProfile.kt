@@ -294,6 +294,7 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                 val fileName = "profile_${System.currentTimeMillis()}.jpg"
                                 val imageRef = storageRef.child("profile_images/$userId/$fileName")
 
+                                val profile = "profile_images/$userId/$fileName"
                                 val existingImageRef = storageRef.child("profile_images/$userId")
 
                                 existingImageRef.listAll().addOnSuccessListener { listResult ->
@@ -344,13 +345,11 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                     try {
                                         val response = imageBody?.let {
                                             updateProfileViewModel.updateProfile(
-                                                name, email, phone, bio, occupation, it
+                                                name, email, phone, bio, occupation, profile
                                             )
                                         }
-
                                         // Handle the API response here (e.g., show toast message)
                                         Toast.makeText(context, response!!.message, Toast.LENGTH_LONG).show()
-
                                         if (response.success) {
                                             navController.navigate(BottomBarScreen.Profile.route)
                                             getUserViewModel.fetchProfile()

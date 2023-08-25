@@ -9,6 +9,7 @@ data class  message(
     val id:Int,
     val sender_id:String,
     val receiver_id : String,
+    val chat_id: String,
     val message : String,
     val created_at : String,
     val updated_at : String

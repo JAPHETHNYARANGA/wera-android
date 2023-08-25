@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
@@ -59,7 +58,7 @@ class UpdateProfileViewModel @Inject constructor(
     }
 
     suspend fun updateProfile(
-        name: String, email: String, phone: String, bio: String, occupation:String, profile: MultipartBody.Part
+        name: String, email: String, phone: String, bio: String, occupation:String, profile: String
     ):UpdateProfileResponse{
         try {
             return updateProfileUseCase.updateProfile(name, email, phone, bio, occupation, profile)

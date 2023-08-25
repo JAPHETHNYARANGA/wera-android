@@ -68,7 +68,7 @@ fun MessagesScreen(
                     modifier = Modifier.padding(10.dp),
                             onClick = {
 
-                                navController.navigate("createMessage/${message.id}")
+                                navController.navigate("createMessage/${message.chat_id}")
                     }
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
