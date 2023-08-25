@@ -91,3 +91,8 @@ interface GetMessages{
     @GET("messages")
     suspend fun getMessages(@Query("userId") userId: String) : Messages
 }
+
+interface GetSpecificMessage{
+    @GET("message")
+    suspend fun getMessage(@Query("chatId") chatId:String) : Messages
+}

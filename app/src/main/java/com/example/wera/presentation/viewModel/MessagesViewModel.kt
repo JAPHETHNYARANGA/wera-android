@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MessagesViewModel @Inject constructor(
     private val getMessagesUseCase: GetMessagesUseCase,
-                                            private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel(){
     private val _messages = MutableStateFlow(emptyList<message>())
     val showMessages : MutableStateFlow<List<message>> get() = _messages

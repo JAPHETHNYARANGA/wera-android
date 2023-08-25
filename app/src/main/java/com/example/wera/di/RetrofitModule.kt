@@ -8,6 +8,7 @@ import com.example.wera.data.network.GetCategories
 import com.example.wera.data.network.GetIndividualListing
 import com.example.wera.data.network.GetMessages
 import com.example.wera.data.network.GetPosts
+import com.example.wera.data.network.GetSpecificMessage
 import com.example.wera.data.network.GetUser
 import com.example.wera.data.network.GetUserListings
 import com.example.wera.data.network.LoginUser
@@ -24,6 +25,7 @@ import com.example.wera.domain.repository.GetCategoriesDataRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
 import com.example.wera.domain.repository.GetListingsRepository
 import com.example.wera.domain.repository.GetMessagesRepository
+import com.example.wera.domain.repository.GetSpecifiMessageRepository
 import com.example.wera.domain.repository.GetUserListingsRepository
 import com.example.wera.domain.repository.GetUserRepository
 import com.example.wera.domain.repository.LoginUserRepository
@@ -36,6 +38,7 @@ import com.example.wera.domain.useCase.GetCategoriesDataUseCase
 import com.example.wera.domain.useCase.GetIndividualItemUseCase
 import com.example.wera.domain.useCase.GetListingUseCase
 import com.example.wera.domain.useCase.GetMessagesUseCase
+import com.example.wera.domain.useCase.GetSpecificMessageUseCase
 import com.example.wera.domain.useCase.GetUserListingsUseCase
 import com.example.wera.domain.useCase.GetUserUseCase
 import com.example.wera.domain.useCase.LoginUserUseCase
@@ -159,6 +162,10 @@ object RetrofitModule {
         return retrofit.create(GetMessages::class.java)
     }
 
+    @Provides
+    fun GetSpecificMessagesData(retrofit : Retrofit) : GetSpecificMessage{
+        return retrofit.create(GetSpecificMessage::class.java)
+    }
     //Repository
 
     @Provides
@@ -222,6 +229,11 @@ object RetrofitModule {
         return GetMessagesRepository(getMessages)
     }
 
+    @Provides
+    fun provideGetSpecificMessageRepository(getSpecificMessage: GetSpecificMessage) : GetSpecifiMessageRepository{
+        return GetSpecifiMessageRepository(getSpecificMessage)
+    }
+
     //UseCase
 
     @Provides
@@ -282,6 +294,11 @@ object RetrofitModule {
     @Provides
     fun providesMessagesUseCase(getMessagesRepository: GetMessagesRepository) : GetMessagesUseCase{
         return GetMessagesUseCase(getMessagesRepository)
+    }
+
+    @Provides
+    fun provideSpecificMessagesUseCase(getSpecifiMessageRepository: GetSpecifiMessageRepository) : GetSpecificMessageUseCase{
+        return GetSpecificMessageUseCase(getSpecifiMessageRepository)
     }
 
 }
