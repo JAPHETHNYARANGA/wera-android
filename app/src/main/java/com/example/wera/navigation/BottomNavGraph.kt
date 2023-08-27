@@ -61,9 +61,8 @@ fun BottomNavGraph(
             MessagesScreen(navController, messagesViewModel)
         }
 
-        composable(route = BottomBarScreen.CreateMessage.route)
-        {
-            createMessagesPage(navController)
+        composable(route = BottomBarScreen.CreateMessage.route) {
+            createMessagesPage(navController, messagesViewModel)
         }
 
         composable(route =BottomBarScreen.Profile.route)
@@ -78,7 +77,7 @@ fun BottomNavGraph(
 
         composable(route = BottomBarScreen.IndividualItem.route)
         {
-            IndividualItemPage(navController , sharedPreferences, getIndividualItemViewModel )
+            IndividualItemPage(navController ,  getIndividualItemViewModel, messagesViewModel )
         }
 
 

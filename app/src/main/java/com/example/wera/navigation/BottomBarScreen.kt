@@ -30,7 +30,8 @@ sealed class BottomBarScreen(
     )
 
     object CreateMessage : BottomBarScreen(
-        route = "createMessage/{messageId}",
+//        route = "createMessage/{receiverId}",
+        route = "createMessage/{receiverId}",
         title = "Create Message",
         icon = R.drawable.message,
         icon_focused = R.drawable.message

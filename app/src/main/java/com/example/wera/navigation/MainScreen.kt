@@ -76,7 +76,9 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
     Scaffold (
         modifier = Modifier.fillMaxWidth(),
 
-        bottomBar = { BottomBar(navController = navController)}
+        bottomBar = {
+                BottomBar(navController = navController)
+        }
             ){
         Column(modifier = Modifier
             .fillMaxSize()

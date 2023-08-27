@@ -46,10 +46,7 @@ fun MessagesScreen(
     val messages by messagesViewModel.showMessages.collectAsState()
     val context = LocalContext.current
 
-    // Define the navigation function
-//    val navigateToCreateMessagesPage: (Int) -> Unit = { messageId ->
-//        navigateToCreateMessages(messageId)
-//    }
+
 
     LazyColumn(
         modifier = Modifier
@@ -67,8 +64,10 @@ fun MessagesScreen(
                 Card(
                     modifier = Modifier.padding(10.dp),
                             onClick = {
+                                message.chat_id?.let { messagesViewModel.showIndividualMessage(it) }
+                                navController.navigate("createMessage/1234")
 
-                                navController.navigate("createMessage/${message.chat_id}")
+
                     }
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -82,18 +81,18 @@ fun MessagesScreen(
                                         .clip(CircleShape)
                                 )
                                 Text(
-                                    text = "Farmer",
+                                    text =  "Unknown", // Display user's name or "Unknown" if not available
                                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                 )
                             }
                             Spacer(modifier = Modifier.width(30.dp))
                             Column() {
-                                Text(text = message.message)
+                                message.message?.let { Text(text = it) }
                                 Spacer(modifier = Modifier.height(30.dp))
-                                if (message.updated_at.isEmpty()) {
-                                    Text(text = message.created_at , style = TextStyle(fontWeight = FontWeight.Bold))
+                                if (message.updated_at?.isEmpty()!!) {
+                                    message.created_at?.let { Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold)) }
                                 } else {
-                                    Text(text = message.updated_at, style = TextStyle(fontWeight = FontWeight.Bold))
+                                    message.updated_at?.let { Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold)) }
                                 }
                             }
                         }

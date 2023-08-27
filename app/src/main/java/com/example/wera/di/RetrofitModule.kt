@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.example.wera.data.network.DeleteAccount
 import com.example.wera.data.network.DeleteListing
 import com.example.wera.data.network.GetCategories
+import com.example.wera.data.network.GetChatIdInterface
 import com.example.wera.data.network.GetIndividualListing
 import com.example.wera.data.network.GetMessages
 import com.example.wera.data.network.GetPosts
@@ -14,14 +15,13 @@ import com.example.wera.data.network.GetUserListings
 import com.example.wera.data.network.LoginUser
 import com.example.wera.data.network.Logout
 import com.example.wera.data.network.PostItem
+import com.example.wera.data.network.PostMessageInterface
 import com.example.wera.data.network.RegisterUser
 import com.example.wera.data.network.UpdateProfile
-import com.example.wera.domain.models.DeleteListingResponse
-import com.example.wera.domain.models.Listings
-import com.example.wera.domain.models.LogoutResponse
 import com.example.wera.domain.repository.DeleteAccountRepository
 import com.example.wera.domain.repository.DeleteListingRepository
 import com.example.wera.domain.repository.GetCategoriesDataRepository
+import com.example.wera.domain.repository.GetChatIdRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
 import com.example.wera.domain.repository.GetListingsRepository
 import com.example.wera.domain.repository.GetMessagesRepository
@@ -30,6 +30,7 @@ import com.example.wera.domain.repository.GetUserListingsRepository
 import com.example.wera.domain.repository.GetUserRepository
 import com.example.wera.domain.repository.LoginUserRepository
 import com.example.wera.domain.repository.LogoutRepository
+import com.example.wera.domain.repository.PostMessageRepository
 import com.example.wera.domain.repository.RegisterUserRepository
 import com.example.wera.domain.repository.UpdateProfileRepository
 import com.example.wera.domain.useCase.DeleteAccountUseCase
@@ -43,6 +44,7 @@ import com.example.wera.domain.useCase.GetUserListingsUseCase
 import com.example.wera.domain.useCase.GetUserUseCase
 import com.example.wera.domain.useCase.LoginUserUseCase
 import com.example.wera.domain.useCase.LogoutUseCase
+import com.example.wera.domain.useCase.PostMessageUseCase
 import com.example.wera.domain.useCase.RegisterUserUseCase
 import com.example.wera.domain.useCase.UpdateProfileUseCase
 import dagger.Module
@@ -55,7 +57,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 
@@ -90,7 +91,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://ed90-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://b256-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -166,6 +167,17 @@ object RetrofitModule {
     fun GetSpecificMessagesData(retrofit : Retrofit) : GetSpecificMessage{
         return retrofit.create(GetSpecificMessage::class.java)
     }
+
+    @Provides
+    fun providePostMessage(retrofit: Retrofit) : PostMessageInterface {
+        return retrofit.create(PostMessageInterface::class.java)
+    }
+
+    @Provides
+    fun providesGetChatId(retrofit: Retrofit) : GetChatIdInterface{
+        return retrofit.create(GetChatIdInterface::class.java)
+    }
+
     //Repository
 
     @Provides
@@ -234,6 +246,15 @@ object RetrofitModule {
         return GetSpecifiMessageRepository(getSpecificMessage)
     }
 
+    @Provides
+    fun providePostMessageRepository(postMessageInterface: PostMessageInterface) : PostMessageRepository{
+        return PostMessageRepository(postMessageInterface)
+    }
+
+    @Provides
+    fun providesGetChatIdRepository(getChatIdInterface: GetChatIdInterface) : GetChatIdRepository{
+        return GetChatIdRepository(getChatIdInterface)
+    }
     //UseCase
 
     @Provides
@@ -299,6 +320,11 @@ object RetrofitModule {
     @Provides
     fun provideSpecificMessagesUseCase(getSpecifiMessageRepository: GetSpecifiMessageRepository) : GetSpecificMessageUseCase{
         return GetSpecificMessageUseCase(getSpecifiMessageRepository)
+    }
+
+    @Provides
+    fun providesPostMessageUseCase(postMessageRepository: PostMessageRepository) : PostMessageUseCase{
+        return PostMessageUseCase(postMessageRepository)
     }
 
 }
