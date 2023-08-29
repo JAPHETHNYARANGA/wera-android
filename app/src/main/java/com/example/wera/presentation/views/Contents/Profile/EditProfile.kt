@@ -110,7 +110,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
             .padding(end = 10.dp, start = 10.dp)
     ) {
 
-
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(text = "Edit Profile", style = TextStyle(fontWeight = FontWeight.Bold))
         }

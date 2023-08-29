@@ -12,6 +12,7 @@ import com.example.wera.domain.models.PostMessageResponse
 import com.example.wera.domain.models.message
 import com.example.wera.domain.useCase.GetChatIdUseCase
 import com.example.wera.domain.useCase.GetMessagesUseCase
+import com.example.wera.domain.useCase.GetReceiverIdUseCase
 import com.example.wera.domain.useCase.GetSpecificMessageUseCase
 import com.example.wera.domain.useCase.PostMessageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class MessagesViewModel @Inject constructor(
     private val postMessageUseCase: PostMessageUseCase,
     private val sharedPreferences: SharedPreferences,
     private val getChatIdUseCase: GetChatIdUseCase,
+    private val getReceiverIdUseCase: GetReceiverIdUseCase
 ) : ViewModel(){
     private val _messages = MutableStateFlow(emptyList<message>())
     val showMessages : MutableStateFlow<List<message>> get() = _messages
@@ -46,6 +48,9 @@ class MessagesViewModel @Inject constructor(
 
     private val _chatId = MutableStateFlow<String?>(null)
     val chatIdVal: StateFlow<String?> = _chatId
+
+    private val _receiverId = MutableStateFlow<String?>(null)
+    val receiverIdVal : StateFlow<String?> = _receiverId
     val postMessage: LiveData<PostMessageResponse> get() = _postMessage
 
     val iRefreshing : StateFlow<Boolean> get() = _isRefreshing
@@ -111,6 +116,23 @@ class MessagesViewModel @Inject constructor(
             }
         }
     }
+
+    fun getReceiverId(userId:String, chatId: String){
+        if(!_isRefreshing.value){
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val receiverId = getReceiverIdUseCase.getReceiverId(userId, chatId)
+                    val receiverIdData = receiverId.receiver_id
+                    _receiverId.value = receiverIdData
+                } catch (e: Exception) {
+                    Log.d("Failure Fetching ReceiverId", "${e.message}")
+                } finally {
+                    _isRefreshing.value = false
+                }
+            }
+        }
+    }
+
     suspend fun postMessage(
         message : String, senderId:String, receiverId:String
     ) : PostMessageResponse{

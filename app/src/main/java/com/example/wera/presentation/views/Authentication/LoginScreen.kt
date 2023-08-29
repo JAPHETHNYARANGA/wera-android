@@ -170,10 +170,10 @@ fun LoginScreen(
                                               userId.apply()
 
                                               val intent = Intent(context, MainActivity::class.java)
+                                              intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                               context.startActivity(intent)
 
 
-                                            
                                           } else {
                                               Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                                           }

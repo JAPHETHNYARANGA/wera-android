@@ -72,12 +72,12 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
     val navController = rememberNavController()
 
 
-
     Scaffold (
         modifier = Modifier.fillMaxWidth(),
 
         bottomBar = {
                 BottomBar(navController = navController)
+
         }
             ){
         Column(modifier = Modifier

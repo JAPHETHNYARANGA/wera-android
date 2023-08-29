@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val preferences = getSharedPreferences("userIdPreference", Context.MODE_PRIVATE)
-                    Toast.makeText(this,"${ preferences.getString("userIdPreference", "")}", Toast.LENGTH_LONG).show()
+
+                    Toast.makeText(this,"${ messagesViewModel.userId}", Toast.LENGTH_LONG).show()
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
@@ -93,6 +93,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+//    override fun onStart() {
+//        super.onStart()
+//
+//        setContent {
+//
+//        }
+//    }
     private fun getLoginToken(sharedPreferences: SharedPreferences): String? {
         return sharedPreferences.getString("loginPreference", null)
     }

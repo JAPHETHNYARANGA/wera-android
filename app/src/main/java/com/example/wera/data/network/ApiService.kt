@@ -14,6 +14,7 @@ import com.example.wera.domain.models.PostItemData
 import com.example.wera.domain.models.PostItemResponse
 import com.example.wera.domain.models.PostMessage
 import com.example.wera.domain.models.PostMessageResponse
+import com.example.wera.domain.models.ReceiverIdResponse
 import com.example.wera.domain.models.RegisterRequest
 import com.example.wera.domain.models.RegisterResponse
 import com.example.wera.domain.models.UpdateProfileData
@@ -110,5 +111,5 @@ interface GetChatIdInterface{
 
 interface GetReceiverIdInterface{
     @GET("receiverId")
-    suspend fun getReceiverId()
+    suspend fun getReceiverId(@Query("userId") userId: String, @Query("chatId") chatId : String) : ReceiverIdResponse
 }

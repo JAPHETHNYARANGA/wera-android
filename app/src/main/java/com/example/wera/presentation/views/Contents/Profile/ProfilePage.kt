@@ -2,6 +2,8 @@ package com.example.wera.presentation.views.Contents.Profile
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -67,9 +69,12 @@ import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LogoutViewModel
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.nio.file.WatchEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -97,24 +102,12 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
             .padding(top = 20.dp, bottom = 20.dp)
             .fillMaxWidth() , horizontalArrangement =  Arrangement.Center) {
 
-            //                        val imageUrl = userData?.profile
-//
-//                        // Use the URL directly, don't convert it to string
-////                        val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(
-////                            imageUrl!!
-////                        )
-//                        val storageReference = imageUrl?.let {
-//                            FirebaseStorage.getInstance().reference.child(
-//                                it
-//                            )
-//                        }
-//                        val downloadUrlTask = storageReference?.downloadUrl
-//
-//                        // This will trigger the image loading and caching process using Coil
-//                        val painter = rememberImagePainter(data = downloadUrlTask?.result.toString())
-//                        Image( painter = painter, contentDescription = "Icon Image",  modifier = Modifier.size(50.dp))
-//
             CircularImage(painter = painterResource(id = R.drawable.worker), contentDescription = "Profile Image")
+        }
+
+
+        userData?.profile?.let {
+            Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold))
         }
 
 

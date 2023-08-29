@@ -3,6 +3,8 @@ package com.example.wera.presentation.views.Contents.Messages
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -24,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -49,11 +54,6 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
         arguments?.getString("receiverId")
     }
 
-    val chatId = remember {
-        val navBackStackEntry = navController.currentBackStackEntry
-        val arguments = navBackStackEntry?.arguments
-        arguments?.getString("chatId")
-    }
 
     //clear messages each time a person leaves the create message screen
     DisposableEffect(Unit) {
@@ -70,8 +70,38 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
     ) {
         LazyColumn {
             items(messagesViewModel.showIndividualMessages.value) { individualMessage ->
-                // Display the individual message here
-                Text(text = individualMessage.message ?: "No message")
+                val isCurrentUser = individualMessage.sender_id == messagesViewModel.userId
+                val cardColor = if (isCurrentUser) {
+                    Color.LightGray // Change this to the color you want for the current user's messages
+                } else {
+                    Color.White // Change this to the color you want for other users' messages
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+//                    contentAlignment = if (isCurrentUser) Alignment.End else Alignment.Start
+                ) {
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 5.dp
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(cardColor) // Set the background color here
+                        ) {
+                            // Display the individual message here
+                            Text(
+                                text = individualMessage.message ?: "No message",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -100,8 +130,7 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
                                 ).let { response ->
                                     if (response.success) {
                                         Toast.makeText(context, "Message sent successfully", Toast.LENGTH_LONG).show()
-                                        messagesViewModel.fetchMessages()
-                                        messagesViewModel.showIndividualMessages
+
                                     } else {
                                         Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                                     }
@@ -112,6 +141,10 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
                             Log.d("Login","${e.message}")
                             // You can also log the exception for debugging purposes
                             e.printStackTrace()
+                        }finally {
+                            message = ""
+                            messagesViewModel.fetchMessages()
+                            messagesViewModel.showIndividualMessages
                         }
                     }
                 }

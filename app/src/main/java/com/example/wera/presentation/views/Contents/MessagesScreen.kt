@@ -1,5 +1,6 @@
 package com.example.wera.presentation.views.Contents
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ fun MessagesScreen(
 ) {
     val messages by messagesViewModel.showMessages.collectAsState()
     val context = LocalContext.current
+    val receiverId by messagesViewModel.receiverIdVal.collectAsState()
 
 
 
@@ -64,9 +66,20 @@ fun MessagesScreen(
                 Card(
                     modifier = Modifier.padding(10.dp),
                             onClick = {
-                                message.chat_id?.let { messagesViewModel.showIndividualMessage(it) }
-                                navController.navigate("createMessage/1234")
+                                val userId = messagesViewModel.userId
+                                val chatId = message.chat_id
+                                if (chatId != null) {
+                                    messagesViewModel.getReceiverId(userId, chatId)
+                                }
 
+
+                                message.chat_id?.let { messagesViewModel.showIndividualMessage(it) }
+
+                                receiverId?.let { Log.d("receiverId", it) }
+
+                                receiverId?.let { receiverId ->
+                                    navController.navigate("createMessage/$receiverId")
+                                }
 
                     }
                 ) {

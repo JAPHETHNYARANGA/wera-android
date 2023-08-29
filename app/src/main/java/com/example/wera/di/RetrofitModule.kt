@@ -9,6 +9,7 @@ import com.example.wera.data.network.GetChatIdInterface
 import com.example.wera.data.network.GetIndividualListing
 import com.example.wera.data.network.GetMessages
 import com.example.wera.data.network.GetPosts
+import com.example.wera.data.network.GetReceiverIdInterface
 import com.example.wera.data.network.GetSpecificMessage
 import com.example.wera.data.network.GetUser
 import com.example.wera.data.network.GetUserListings
@@ -25,6 +26,7 @@ import com.example.wera.domain.repository.GetChatIdRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
 import com.example.wera.domain.repository.GetListingsRepository
 import com.example.wera.domain.repository.GetMessagesRepository
+import com.example.wera.domain.repository.GetReceiverIdRepository
 import com.example.wera.domain.repository.GetSpecifiMessageRepository
 import com.example.wera.domain.repository.GetUserListingsRepository
 import com.example.wera.domain.repository.GetUserRepository
@@ -39,6 +41,7 @@ import com.example.wera.domain.useCase.GetCategoriesDataUseCase
 import com.example.wera.domain.useCase.GetIndividualItemUseCase
 import com.example.wera.domain.useCase.GetListingUseCase
 import com.example.wera.domain.useCase.GetMessagesUseCase
+import com.example.wera.domain.useCase.GetReceiverIdUseCase
 import com.example.wera.domain.useCase.GetSpecificMessageUseCase
 import com.example.wera.domain.useCase.GetUserListingsUseCase
 import com.example.wera.domain.useCase.GetUserUseCase
@@ -57,6 +60,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import javax.inject.Singleton
 
 
@@ -91,7 +95,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://b256-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://9d7e-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -178,6 +182,10 @@ object RetrofitModule {
         return retrofit.create(GetChatIdInterface::class.java)
     }
 
+    @Provides
+    fun providesGetReceiverId(retrofit: Retrofit) : GetReceiverIdInterface{
+        return retrofit.create(GetReceiverIdInterface::class.java)
+    }
     //Repository
 
     @Provides
@@ -255,6 +263,11 @@ object RetrofitModule {
     fun providesGetChatIdRepository(getChatIdInterface: GetChatIdInterface) : GetChatIdRepository{
         return GetChatIdRepository(getChatIdInterface)
     }
+
+    @Provides
+    fun providesGetReceiverIdRepository(getReceiverIdInterface: GetReceiverIdInterface) : GetReceiverIdRepository{
+        return GetReceiverIdRepository(getReceiverIdInterface)
+    }
     //UseCase
 
     @Provides
@@ -327,4 +340,8 @@ object RetrofitModule {
         return PostMessageUseCase(postMessageRepository)
     }
 
+    @Provides
+    fun providesGetReceiverIdUseCase(getReceiverIdRepository: GetReceiverIdRepository) : GetReceiverIdUseCase{
+        return GetReceiverIdUseCase(getReceiverIdRepository)
+    }
 }
