@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.wera.R
 import com.example.wera.domain.models.UserData
 import com.example.wera.navigation.TopNabBar
@@ -45,6 +46,8 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsViewModel,getIndividualItemViewModel: GetIndividualItemViewModel) {
     val listings by getListingsViewModel.listingsDisplay.collectAsState()
+
+
     val isSingleItem = listings.size == 1 // Check if there is only one item in the list
     val context = LocalContext.current
 
@@ -79,10 +82,19 @@ fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsVi
                                 .clickable { process.id?.let { onCardClicked(it) } },
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.worker),
-                                contentDescription = "Icon Image"
-                            )
+                            process.image?.let { url ->
+                                // Load the image using the Coil library or any other image loading library
+                                // Here's an example using Coil:
+                                Image(
+                                    painter = rememberImagePainter(url), // Remember to import Coil related functions
+                                    contentDescription = "Listing Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(120.dp)
+                                )
+                            }
+
+
                             Text(
                                 text = "Name",
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)

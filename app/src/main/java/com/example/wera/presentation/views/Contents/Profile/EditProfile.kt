@@ -331,6 +331,28 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                                 Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
                                                 Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
                                             }
+
+                                            // Send the API request to update the user profile with the image
+                                            scope.launch {
+                                                try {
+                                                    val response = imageBody?.let {
+                                                        updateProfileViewModel.updateProfile(
+                                                            name, email, phone, bio, occupation, profile
+                                                        )
+                                                    }
+                                                    // Handle the API response here (e.g., show toast message)
+                                                    Toast.makeText(context, response!!.message, Toast.LENGTH_LONG).show()
+                                                    if (response.success) {
+                                                        navController.navigate(BottomBarScreen.Profile.route)
+                                                        getUserViewModel.fetchProfile()
+                                                    }
+                                                } catch (e: Exception) {
+                                                    Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                                                    Log.d("Profile Update", "${e.message}")
+                                                    e.printStackTrace()
+                                                }
+                                            }
+
                                         } else {
                                             Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
                                         }
@@ -339,26 +361,7 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                     Log.e("FirebaseStorage", "Failed to list items in folder: $exception")
                                 }
 
-                                // Send the API request to update the user profile with the image
-                                scope.launch {
-                                    try {
-                                        val response = imageBody?.let {
-                                            updateProfileViewModel.updateProfile(
-                                                name, email, phone, bio, occupation, profile
-                                            )
-                                        }
-                                        // Handle the API response here (e.g., show toast message)
-                                        Toast.makeText(context, response!!.message, Toast.LENGTH_LONG).show()
-                                        if (response.success) {
-                                            navController.navigate(BottomBarScreen.Profile.route)
-                                            getUserViewModel.fetchProfile()
-                                        }
-                                    } catch (e: Exception) {
-                                        Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-                                        Log.d("Profile Update", "${e.message}")
-                                        e.printStackTrace()
-                                    }
-                                }
+
                             }
                         } else {
                             // Show a message indicating that all required fields must be filled

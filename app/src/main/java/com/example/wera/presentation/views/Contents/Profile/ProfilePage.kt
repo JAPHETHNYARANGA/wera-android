@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -38,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.wera.MainActivity
 import com.example.wera.R
@@ -88,6 +91,7 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
     val userData = userDataState.value // Get the current value of the user data state
     val listings by getUserListingsViewModel.listingsDisplay.collectAsState()
     val showDialog = remember { mutableStateOf(false) }
+    val imageUrl by getUserViewModel.imageUrl.collectAsState()
 
 
     Column(modifier = Modifier
@@ -102,13 +106,25 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
             .padding(top = 20.dp, bottom = 20.dp)
             .fillMaxWidth() , horizontalArrangement =  Arrangement.Center) {
 
-            CircularImage(painter = painterResource(id = R.drawable.worker), contentDescription = "Profile Image")
+            Row(modifier = Modifier
+                .padding(top = 20.dp, bottom = 20.dp)
+                .fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+
+                imageUrl?.let { url ->
+                    val painter = rememberImagePainter(url)
+
+                    Image(
+                        painter = painter,
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape) // Clip the image to make it circular
+                    )
+                }
+            }
         }
 
 
-        userData?.profile?.let {
-            Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold))
-        }
 
 
         // Display the user data attributes here
@@ -315,4 +331,5 @@ fun CircularImage(painter: Painter, contentDescription: String) {
             .clip(CircleShape) // Clip the image to make it circular
     )
 }
+
 

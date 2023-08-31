@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -74,10 +75,10 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
 
     Scaffold (
         modifier = Modifier.fillMaxWidth(),
-
         bottomBar = {
+            if (shouldShowBottomBar(navController.currentBackStackEntry)) {
                 BottomBar(navController = navController)
-
+            }
         }
             ){
         Column(modifier = Modifier
@@ -173,4 +174,15 @@ fun AddItem(
             )
         }
     }
+}
+
+fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
+    val screensWithoutBottomBar = setOf(
+        BottomBarScreen.CreateMessage.route,
+        BottomBarScreen.Edit.route,
+        BottomBarScreen.IndividualItem.route
+    )
+    val currentDestination = backStackEntry?.destination?.route
+    return currentDestination !in screensWithoutBottomBar
+            && currentDestination != BottomBarScreen.CreateMessage.route
 }

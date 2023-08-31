@@ -68,6 +68,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.util.UUID
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -332,123 +333,123 @@ fun FavoritesScreen(
 
                     CoroutineScope(Dispatchers.Main).launch {
 
-                        // Get a reference to Firebase Storage
+                        try {
+                            // Get a reference to Firebase Storage
+                            val selectedFile = imageUri?.let { uri ->
+                                try {
+                                    val inputStream = context.contentResolver.openInputStream(uri)
+                                    val byteArray = inputStream?.readBytes()
+                                    inputStream?.close()
 
-                        val selectedFile = imageUri?.let { uri ->
-                            try {
-                                val inputStream = context.contentResolver.openInputStream(uri)
-                                val byteArray = inputStream?.readBytes()
-                                inputStream?.close()
-
-                                if (byteArray != null) {
-                                    // Save the ByteArray to a temporary file
-                                    val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
-                                    tempFile.writeBytes(byteArray)
-                                    tempFile
-                                } else {
+                                    if (byteArray != null) {
+                                        // Save the ByteArray to a temporary file
+                                        val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
+                                        tempFile.writeBytes(byteArray)
+                                        tempFile
+                                    } else {
+                                        null
+                                    }
+                                } catch (e: Exception) {
                                     null
                                 }
-                            } catch (e: Exception) {
-                                null
                             }
-                        }
-                        // Check if the Bitmap is not null
-                        if (selectedFile != null) {
-                            // Convert Bitmap to ByteArray
-                            val requestBuilder = selectedFile?.let {
-                                RequestBody.create("image/*".toMediaTypeOrNull(),
-                                    it
-                                )
-                            }
-
-                            // Create the MultipartBody.Part
-                            val imageBody = requestBuilder?.let {
-                                MultipartBody.Part.createFormData("profile_image", selectedFile.name,
-                                    it
-                                )
-                            }
-
-                            // Get a reference to Firebase Storage
-                            val storage = FirebaseStorage.getInstance()
-                            val storageRef = storage.reference
-
-                            // Initialize shared preferences
-                            val userId = postItemViewModel.userId
-
-                            // Generate a unique name for the image file using the current timestamp
-                            val fileName = "item_${System.currentTimeMillis()}.jpg"
-                            val imageRef = storageRef.child("item_images/$userId/$fileName")
-
-                            val profile = "item_images/$userId/$fileName"
-                            val existingImageRef = storageRef.child("item_images/$userId")
-
-                            existingImageRef.listAll().addOnSuccessListener { listResult ->
-                                val allTasks = mutableListOf<Task<Void>>()
-                                listResult.items.forEach { item ->
-                                    val deleteTask = item.delete()
-                                    allTasks.add(deleteTask)
+                            // Check if the Bitmap is not null
+                            if (selectedFile != null) {
+                                // Convert Bitmap to ByteArray
+                                val requestBuilder = selectedFile?.let {
+                                    RequestBody.create("image/*".toMediaTypeOrNull(),
+                                        it
+                                    )
                                 }
 
-                                Tasks.whenAllComplete(allTasks).addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        Log.d("FirebaseStorage", "All images inside folder deleted successfully")
-                                        // Upload the image to Firebase Storage
-                                        val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+                                // Create the MultipartBody.Part
+                                val imageBody = requestBuilder?.let {
+                                    MultipartBody.Part.createFormData("profile_image", selectedFile.name,
+                                        it
+                                    )
+                                }
+                                // Get a reference to Firebase Storage
+                                val storage = FirebaseStorage.getInstance()
+                                val storageRef = storage.reference
 
-                                        uploadTask.continueWithTask { task ->
-                                            if (!task.isSuccessful) {
-                                                task.exception?.let {
-                                                    throw it
+                                // Initialize shared preferences
+                                val userId = postItemViewModel.userId
+                                val uniqueId = UUID.randomUUID().toString()
+
+                                // Generate a unique name for the image file using the current timestamp
+                                val fileName = "item_${System.currentTimeMillis()}.jpg"
+                                val imageRef = storageRef.child("item_images/$userId/$uniqueId/$fileName")
+
+                                val image = "item_images/$userId/$uniqueId/$fileName"
+                                val existingImageRef = storageRef.child("item_images/$userId")
+
+                                existingImageRef.listAll().addOnSuccessListener { listResult ->
+                                    val allTasks = mutableListOf<Task<Void>>()
+                                    listResult.items.forEach { item ->
+                                        val deleteTask = item.delete()
+                                        allTasks.add(deleteTask)
+                                    }
+
+                                    Tasks.whenAllComplete(allTasks).addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Log.d("FirebaseStorage", "All images inside folder deleted successfully")
+                                            // Upload the image to Firebase Storage
+                                            val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+
+                                            uploadTask.continueWithTask { task ->
+                                                if (!task.isSuccessful) {
+                                                    task.exception?.let {
+                                                        throw it
+                                                    }
+                                                }
+                                                imageRef.downloadUrl
+                                            }.addOnCompleteListener { task ->
+                                                if (task.isSuccessful) {
+                                                    val imageUrl = task.result.toString()
+                                                    Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
+
+                                                } else {
+                                                    // Handle unsuccessful image upload
+                                                    Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
                                                 }
                                             }
-                                            imageRef.downloadUrl
-                                        }.addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                val imageUrl = task.result.toString()
-                                                Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
 
-                                            } else {
-                                                // Handle unsuccessful image upload
-                                                Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                                            uploadTask.addOnFailureListener { exception ->
+                                                Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
+                                                Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
                                             }
+                                        } else {
+                                            Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
                                         }
-
-                                        uploadTask.addOnFailureListener { exception ->
-                                            Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
-                                            Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
-                                        }
-                                    } else {
-                                        Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
                                     }
+                                }.addOnFailureListener { exception ->
+                                    Log.e("FirebaseStorage", "Failed to list items in folder: $exception")
                                 }
-                            }.addOnFailureListener { exception ->
-                                Log.e("FirebaseStorage", "Failed to list items in folder: $exception")
-                            }
 
 
-                        }
+                                postItemViewModel.postItem(
+                                    name, description, location, amount, 2, status, image
+                                ).let { response ->
 
-
-
-                        try {
-                            postItemViewModel.postItem(
-                                name, description, location, amount, 2, status
-                            ).let { response ->
-
-                                Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-
-                                if (response.success) {
-
-                                    navController.navigate("home")
-                                    getListingsViewModel.fetchListings()
-                                    getUserListingsViewModel.fetchListings()
-
-
-                                } else {
                                     Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+
+                                    if (response.success) {
+
+                                        navController.navigate("home")
+                                        getListingsViewModel.fetchListings()
+                                        getUserListingsViewModel.fetchListings()
+
+
+                                    } else {
+                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+                                    }
+
                                 }
 
+
                             }
+
+
                         } catch (e: Exception) {
                             Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
                             Log.d("Login","${e.message}")
@@ -456,7 +457,6 @@ fun FavoritesScreen(
                             e.printStackTrace()
                         }
                     }
-
 
 
             },
