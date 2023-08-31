@@ -68,7 +68,10 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
             .padding(end = 15.dp, start = 15.dp, bottom = 30.dp)
             .fillMaxSize()
     ) {
-        LazyColumn {
+        LazyColumn (
+            modifier = Modifier
+                .weight(1f)
+                ){
             items(messagesViewModel.showIndividualMessages.value) { individualMessage ->
                 val isCurrentUser = individualMessage.sender_id == messagesViewModel.userId
                 val cardColor = if (isCurrentUser) {
