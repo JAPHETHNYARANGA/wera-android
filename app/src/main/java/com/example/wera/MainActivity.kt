@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.navigation.MainScreen
 import com.example.wera.presentation.viewModel.DeleteAccountViewModel
 import com.example.wera.presentation.viewModel.DeleteListingViewModel
@@ -32,6 +33,7 @@ import com.example.wera.presentation.viewModel.RegisterUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 import com.example.wera.presentation.views.Authentication.LoginScreen
 import com.example.wera.presentation.views.Authentication.RegisterScreen
+import com.example.wera.presentation.views.Contents.FavoritesScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.ui.theme.WeraTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +84,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("login") {
-                            LoginScreen(loginUserViewModel, navController)
+                            LoginScreen(loginUserViewModel,getListingsViewModel, navController)
                         }
 
                         composable("register") {

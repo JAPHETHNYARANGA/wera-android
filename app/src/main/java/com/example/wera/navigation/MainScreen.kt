@@ -71,12 +71,13 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                messagesViewModel :MessagesViewModel
 ){
     val navController = rememberNavController()
-
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold (
         modifier = Modifier.fillMaxWidth(),
         bottomBar = {
-            if (shouldShowBottomBar(navController.currentBackStackEntry)) {
+            if (currentRoute != BottomBarScreen.CreateMessage.route) {
                 BottomBar(navController = navController)
             }
         }
@@ -176,13 +177,4 @@ fun AddItem(
     }
 }
 
-fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
-    val screensWithoutBottomBar = setOf(
-        BottomBarScreen.CreateMessage.route,
-        BottomBarScreen.Edit.route,
-        BottomBarScreen.IndividualItem.route
-    )
-    val currentDestination = backStackEntry?.destination?.route
-    return currentDestination !in screensWithoutBottomBar
-            && currentDestination != BottomBarScreen.CreateMessage.route
-}
+
