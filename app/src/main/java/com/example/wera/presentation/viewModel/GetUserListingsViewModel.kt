@@ -27,6 +27,7 @@ class GetUserListingsViewModel @Inject constructor(private val getUserListingsUs
     val isRefreshing : StateFlow<Boolean> get() = _isRefreshing
 
     private val _imageUrl = MutableStateFlow<String?>(null)
+
     val imageUrl: StateFlow<String?> = _imageUrl
 
     init {
@@ -41,17 +42,17 @@ class GetUserListingsViewModel @Inject constructor(private val getUserListingsUs
                 val listings = listingData.listings
                 _listings.value = listings
 
-
-
-                for (listing in listings) {
-                    listing.image?.let { storageLocation ->
-                        val storage = FirebaseStorage.getInstance()
-                        val storageRef = storage.getReference(storageLocation)
-                        val imageUrl = storageRef.downloadUrl.await().toString()
-                        _imageUrl.value = imageUrl
-                    }
-                }
-
+//                for (listing in listings) {
+//                    listing.image?.let { storageLocation ->
+//
+//                        val storage = FirebaseStorage.getInstance()
+//                        val storageRef = storage.getReference(storageLocation)
+//                        val imageUrl = storageRef.downloadUrl.await().toString()
+//                        _imageUrl.value = imageUrl
+//
+//
+//                    }
+//                }
 
             }catch (e: Exception){
                 Log.d("Failure fetching user listings", "${e.message}")

@@ -408,6 +408,41 @@ fun FavoritesScreen(
                                                     val imageUrl = task.result.toString()
                                                     Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
 
+                                                    CoroutineScope(Dispatchers.Main).launch {
+                                                        postItemViewModel.postItem(
+                                                            name,
+                                                            description,
+                                                            location,
+                                                            amount,
+                                                            2,
+                                                            status,
+                                                            image
+                                                        ).let { response ->
+
+                                                            Toast.makeText(
+                                                                context,
+                                                                response.message,
+                                                                Toast.LENGTH_LONG
+                                                            ).show()
+
+                                                            if (response.success) {
+
+                                                                navController.navigate("home")
+                                                                getListingsViewModel.fetchListings()
+                                                                getUserListingsViewModel.fetchListings()
+
+
+                                                            } else {
+                                                                Toast.makeText(
+                                                                    context,
+                                                                    response.message,
+                                                                    Toast.LENGTH_LONG
+                                                                ).show()
+                                                            }
+
+                                                        }
+                                                    }
+
                                                 } else {
                                                     // Handle unsuccessful image upload
                                                     Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
@@ -416,7 +451,7 @@ fun FavoritesScreen(
 
                                             uploadTask.addOnFailureListener { exception ->
                                                 Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
-                                                Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "Something went wrong, check connection and try again", Toast.LENGTH_LONG).show()
                                             }
                                         } else {
                                             Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
@@ -427,24 +462,7 @@ fun FavoritesScreen(
                                 }
 
 
-                                postItemViewModel.postItem(
-                                    name, description, location, amount, 2, status, image
-                                ).let { response ->
 
-                                    Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-
-                                    if (response.success) {
-
-                                        navController.navigate("home")
-                                        getListingsViewModel.fetchListings()
-                                        getUserListingsViewModel.fetchListings()
-
-
-                                    } else {
-                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-                                    }
-
-                                }
 
 
                             }
