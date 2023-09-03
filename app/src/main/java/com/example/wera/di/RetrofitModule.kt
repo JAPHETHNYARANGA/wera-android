@@ -64,11 +64,10 @@ import retrofit2.create
 import javax.inject.Singleton
 
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
-
-
 
     @Singleton
     @Provides
@@ -95,7 +94,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://d9d3-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://1132-105-163-2-95.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

@@ -227,7 +227,7 @@ fun FavoritesScreen(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = { Text("Task Name") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(0xFF1A202C),
                 unfocusedBorderColor = Color(0xFF1A202C)
@@ -316,7 +316,7 @@ fun FavoritesScreen(
         OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
-            label = { Text("Amount") },
+            label = { Text("Budget") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(0xFF1A202C),
                 unfocusedBorderColor = Color(0xFF1A202C)

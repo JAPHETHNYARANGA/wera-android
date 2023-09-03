@@ -118,7 +118,7 @@ fun HomeScreen(navController: NavController,
 
 
                             Text(
-                                text = "Name",
+                                text = "Task Name",
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             )
                             process.name?.let { Text(text = it) }
@@ -133,7 +133,7 @@ fun HomeScreen(navController: NavController,
                             )
                             process.category?.let { Text(text = it) }
                             Text(
-                                text = "Amount",
+                                text = "Budget",
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             )
                             process.amount?.let { Text(text = it) }

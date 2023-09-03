@@ -16,17 +16,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.wera.R
 import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.example.wera.presentation.viewModel.MessagesViewModel
@@ -44,11 +48,22 @@ fun IndividualItemPage(
     val itemData = itemDataState.value
     val chatIdState = messagesViewModel.chatIdVal.collectAsState()
     val chatId = chatIdState.value
+    val imageUrl by getIndividualItemViewModel.imageUrl.collectAsState()
+
 
     if (itemData != null && itemData.success == true) {
         Column(modifier = Modifier.padding(end = 10.dp, start = 10.dp)) {
 
-            Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image")
+            imageUrl?.let { url ->
+                val painter = rememberImagePainter(url)
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Profile Image"
+                )
+            }
+
+//            Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image")
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -57,7 +72,7 @@ fun IndividualItemPage(
             Text(text = "Description: ${itemData.listing?.description}")
             Text(text = "Location: ${itemData.listing?.Location}")
             Text(text = "Category: ${itemData.listing?.category}")
-            Text(text = "Amount: ${itemData.listing?.amount}")
+            Text(text = "Budget: ${itemData.listing?.amount}")
 
             // Add other properties as needed
 
