@@ -1,5 +1,6 @@
 package com.example.wera.presentation.views.Contents
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -21,8 +22,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -32,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.wera.R
 import com.example.wera.domain.models.UserData
 import com.example.wera.navigation.TopNabBar
@@ -39,12 +44,19 @@ import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.tasks.await
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsViewModel,getIndividualItemViewModel: GetIndividualItemViewModel) {
+fun HomeScreen(navController: NavController,
+               getListingsViewModel: GetListingsViewModel,
+               getIndividualItemViewModel: GetIndividualItemViewModel) {
     val listings by getListingsViewModel.listingsDisplay.collectAsState()
+
+
+
     val isSingleItem = listings.size == 1 // Check if there is only one item in the list
     val context = LocalContext.current
 
@@ -54,7 +66,9 @@ fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsVi
         navController.navigate("individualItem")
     }
 
-    Row(modifier = Modifier.fillMaxWidth().zIndex(10f)) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .zIndex(10f)) {
         TopNabBar()
     }
 
@@ -79,12 +93,32 @@ fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsVi
                                 .clickable { process.id?.let { onCardClicked(it) } },
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.worker),
-                                contentDescription = "Icon Image"
-                            )
+
+                            val url = process?.image
+                            val imageUrlState = remember { mutableStateOf<String?>(null) }
+
+                            LaunchedEffect(url) {
+                                val storage = FirebaseStorage.getInstance()
+                                val storageRef = url?.let { storage.getReference(it) }
+                                val imageUrl = storageRef?.downloadUrl?.await()?.toString()
+
+                                imageUrlState.value = imageUrl
+
+                                Log.d("GetUserListingsViewModel", "Fetching image URL for storage location: $imageUrl")
+                            }
+                            imageUrlState.value?.let { imageUrl ->
+                                Image(
+                                    painter = rememberImagePainter(imageUrl),
+                                    contentDescription = "Listing Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(120.dp)
+                                )
+                            }
+
+
                             Text(
-                                text = "Name",
+                                text = "Task Name",
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             )
                             process.name?.let { Text(text = it) }
@@ -99,7 +133,7 @@ fun HomeScreen(navController: NavController, getListingsViewModel: GetListingsVi
                             )
                             process.category?.let { Text(text = it) }
                             Text(
-                                text = "Amount",
+                                text = "Budget",
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             )
                             process.amount?.let { Text(text = it) }

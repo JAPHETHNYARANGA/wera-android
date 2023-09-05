@@ -2,6 +2,9 @@ package com.example.wera.presentation.views.Contents.Profile
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -36,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +60,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.wera.MainActivity
 import com.example.wera.R
 import com.example.wera.navigation.BottomBarScreen
@@ -65,9 +71,13 @@ import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserViewModel
 import com.example.wera.presentation.viewModel.LogoutViewModel
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.nio.file.WatchEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -81,6 +91,7 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
     val userData = userDataState.value // Get the current value of the user data state
     val listings by getUserListingsViewModel.listingsDisplay.collectAsState()
     val showDialog = remember { mutableStateOf(false) }
+    val imageUrl by getUserViewModel.imageUrl.collectAsState()
 
 
     Column(modifier = Modifier
@@ -94,8 +105,26 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
         Row(modifier = Modifier
             .padding(top = 20.dp, bottom = 20.dp)
             .fillMaxWidth() , horizontalArrangement =  Arrangement.Center) {
-            CircularImage(painter = painterResource(id = R.drawable.worker), contentDescription = "Profile Image")
+
+            Row(modifier = Modifier
+                .padding(top = 20.dp, bottom = 20.dp)
+                .fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+
+                imageUrl?.let { url ->
+                    val painter = rememberImagePainter(url)
+
+                    Image(
+                        painter = painter,
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape) // Clip the image to make it circular
+                    )
+                }
+            }
         }
+
+
 
 
         // Display the user data attributes here
@@ -135,7 +164,7 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image",  modifier = Modifier.size(50.dp))
+
                         process.name?.let {
                             Text(
                                 text = it,
@@ -281,11 +310,8 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                             Toast.makeText(context, "delete Account failed", Toast.LENGTH_SHORT).show()
                         }
                     }
-
-
                 }) {
                     Text(text = "Delete Account")
-
                 }
             }
     }
@@ -305,4 +331,5 @@ fun CircularImage(painter: Painter, contentDescription: String) {
             .clip(CircleShape) // Clip the image to make it circular
     )
 }
+
 

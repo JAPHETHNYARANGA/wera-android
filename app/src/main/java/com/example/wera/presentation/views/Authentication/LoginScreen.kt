@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.wera.MainActivity
 import com.example.wera.R
+import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.LoginUserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +58,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     loginUserViewModel: LoginUserViewModel,
+    getListingsViewModel: GetListingsViewModel,
     navController: NavController
 ) {
     var email by remember { mutableStateOf("") }
@@ -169,11 +171,12 @@ fun LoginScreen(
                                               userId.putString("userIdPreference", response.user.userId)
                                               userId.apply()
 
+                                              getListingsViewModel.fetchListings()
                                               val intent = Intent(context, MainActivity::class.java)
+                                              intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                               context.startActivity(intent)
 
 
-                                            
                                           } else {
                                               Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                                           }

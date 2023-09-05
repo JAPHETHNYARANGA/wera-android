@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -58,7 +59,6 @@ import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 @Composable
 fun MainScreen(postItemViewModel : PostItemViewModel,
                sharedPreferences : SharedPreferences,
-               sharedUserPreferences : SharedPreferences,
                getListingsViewModel : GetListingsViewModel,
                 updateProfileViewModel: UpdateProfileViewModel,
                getUserViewModel : GetUserViewModel,
@@ -71,13 +71,16 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                messagesViewModel :MessagesViewModel
 ){
     val navController = rememberNavController()
-
-
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold (
         modifier = Modifier.fillMaxWidth(),
-
-        bottomBar = { BottomBar(navController = navController)}
+        bottomBar = {
+            if (currentRoute != BottomBarScreen.CreateMessage.route) {
+                BottomBar(navController = navController)
+            }
+        }
             ){
         Column(modifier = Modifier
             .fillMaxSize()
@@ -85,7 +88,6 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
             BottomNavGraph(navController = navController,
                 postItemViewModel = postItemViewModel,
                 sharedPreferences = sharedPreferences,
-                sharedUserPreferences = sharedUserPreferences,
                 getListingsViewModel = getListingsViewModel,
                 updateProfileViewModel = updateProfileViewModel,
                 getUserViewModel = getUserViewModel,
@@ -174,3 +176,5 @@ fun AddItem(
         }
     }
 }
+
+

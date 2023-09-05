@@ -16,8 +16,6 @@ import javax.security.auth.login.LoginException
 @HiltViewModel
 class LoginUserViewModel @Inject constructor(private val loginUserUseCase: LoginUserUseCase) : ViewModel() {
 
-//    private val tokenKey = "loginPreference"
-
     private val _loginUser = MutableLiveData<LoginResponse>()
 
     val loginUser: LiveData<LoginResponse> get() = _loginUser
@@ -37,8 +35,6 @@ class LoginUserViewModel @Inject constructor(private val loginUserUseCase: Login
             throw LoginException("Request timed out")
         }
     }
-//    fun clearToken(sharedPreferences: SharedPreferences) {
-//        sharedPreferences.edit().remove(tokenKey).apply()
-//    }
+
 }
 class LoginException(message: String) : Exception(message)

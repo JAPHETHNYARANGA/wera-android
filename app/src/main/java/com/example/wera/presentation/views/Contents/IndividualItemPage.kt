@@ -3,76 +3,133 @@ package com.example.wera.presentation.views.Contents
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.wera.MainActivity
+import coil.compose.rememberImagePainter
 import com.example.wera.R
-import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
-import com.example.wera.presentation.viewModel.GetUserListingsViewModel
-import com.example.wera.presentation.viewModel.GetUserViewModel
-import com.example.wera.presentation.views.Contents.Profile.CircularImage
-import com.example.wera.presentation.views.Contents.Profile.clearToken
+import com.example.wera.presentation.viewModel.MessagesViewModel
 
 
 @Composable
-fun IndividualItemPage(navController: NavController, sharedPreferences: SharedPreferences, getIndividualItemViewModel: GetIndividualItemViewModel){
+fun IndividualItemPage(
+    navController: NavController,
+    getIndividualItemViewModel: GetIndividualItemViewModel,
+    messagesViewModel: MessagesViewModel
+
+){
     val context = LocalContext.current
     val itemDataState  = getIndividualItemViewModel.individualDisplay.collectAsState()
     val itemData = itemDataState.value
+    val chatIdState = messagesViewModel.chatIdVal.collectAsState()
+    val chatId = chatIdState.value
+    val imageUrl by getIndividualItemViewModel.imageUrl.collectAsState()
 
-  
-    if (itemData != null && itemData.success) {
-        Column(modifier =  Modifier.padding(end = 10.dp, start = 10.dp)) {
 
-            Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image")
-            
+    if (itemData != null && itemData.success == true) {
+        Column(modifier = Modifier.padding(end = 10.dp, start = 10.dp)) {
+
+            imageUrl?.let { url ->
+                val painter = rememberImagePainter(url)
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Profile Image"
+                )
+            }
+
+//            Image(painter = painterResource(id = R.drawable.worker), contentDescription = "Icon Image")
+
             Spacer(modifier = Modifier.height(30.dp))
-
 
             // Add other Text components for other properties of the listing
             // For example:
-            Text(text = "Description: ${itemData.listing.description}")
-            Text(text = "Location: ${itemData.listing.Location}")
-            Text(text = "Category: ${itemData.listing.category}")
-            Text(text = "Amount: ${itemData.listing.amount}")
+            Text(text = "Description: ${itemData.listing?.description}")
+            Text(text = "Location: ${itemData.listing?.Location}")
+            Text(text = "Category: ${itemData.listing?.category}")
+            Text(text = "Budget: ${itemData.listing?.amount}")
+
             // Add other properties as needed
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = {
+                    val receiverId = itemData?.user?.userId
+                    val senderId = messagesViewModel.userId
+                    if (receiverId != null) {
+                        messagesViewModel.getChatId(senderId,receiverId)
+                    }
+
+                    if (chatId != null) {
+                        Log.d("ChatId data", chatId)
+                    }
+                    if (chatId != null) {
+                        messagesViewModel.showIndividualMessage(chatId)
+                    }
+
+                    navController.navigate("createMessage/$receiverId")
+
+                }) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.message), // Replace with your icon resource
+                            contentDescription = "message Icon",
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Send Message")
+                    }
+                }
+
+                Button(onClick = {
+                    val phoneNumber = itemData?.user?.phone ?: ""
+                    if (phoneNumber.isNotBlank()) {
+                        val intent = Intent(Intent.ACTION_DIAL)
+                        intent.data = Uri.parse("tel:$phoneNumber")
+                        context.startActivity(intent)
+                    }
+                }) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.phone), // Replace with your icon resource
+                            contentDescription = "contact Icon",
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Contact")
+                    }
+                }
+            }
         }
     } else {
         // If itemData is null or does not contain the listing data, you can display a message

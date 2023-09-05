@@ -1,5 +1,6 @@
 package com.example.wera.presentation.views.Contents
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,13 +33,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.wera.R
 import com.example.wera.presentation.viewModel.MessagesViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessagesScreen(messagesViewModel : MessagesViewModel) {
+fun MessagesScreen(
+    navController: NavController,
+    messagesViewModel : MessagesViewModel,
+//                   navigateToCreateMessages: (Int) -> Unit
+) {
     val messages by messagesViewModel.showMessages.collectAsState()
     val context = LocalContext.current
+    val receiverId by messagesViewModel.receiverIdVal.collectAsState()
+
 
 
     LazyColumn(
@@ -52,10 +62,26 @@ fun MessagesScreen(messagesViewModel : MessagesViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp),
-//                color = Color.Gray,
             ) {
                 Card(
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(10.dp),
+                            onClick = {
+                                val userId = messagesViewModel.userId
+                                val chatId = message.chat_id
+                                if (chatId != null) {
+                                    messagesViewModel.getReceiverId(userId, chatId)
+                                }
+
+
+                                message.chat_id?.let { messagesViewModel.showIndividualMessage(it) }
+
+                                receiverId?.let { Log.d("receiverId", it) }
+
+                                receiverId?.let { receiverId ->
+                                    navController.navigate("createMessage/$receiverId")
+                                }
+
+                    }
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -68,18 +94,18 @@ fun MessagesScreen(messagesViewModel : MessagesViewModel) {
                                         .clip(CircleShape)
                                 )
                                 Text(
-                                    text = "Farmer",
+                                    text =  "Unknown", // Display user's name or "Unknown" if not available
                                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                 )
                             }
                             Spacer(modifier = Modifier.width(30.dp))
                             Column() {
-                                Text(text = message.message)
+                                message.message?.let { Text(text = it) }
                                 Spacer(modifier = Modifier.height(30.dp))
-                                if (message.updated_at.isEmpty()) {
-                                    Text(text = message.created_at , style = TextStyle(fontWeight = FontWeight.Bold))
+                                if (message.updated_at?.isEmpty()!!) {
+                                    message.created_at?.let { Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold)) }
                                 } else {
-                                    Text(text = message.updated_at, style = TextStyle(fontWeight = FontWeight.Bold))
+                                    message.updated_at?.let { Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold)) }
                                 }
                             }
                         }

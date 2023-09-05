@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.navigation.MainScreen
 import com.example.wera.presentation.viewModel.DeleteAccountViewModel
 import com.example.wera.presentation.viewModel.DeleteListingViewModel
@@ -32,6 +33,7 @@ import com.example.wera.presentation.viewModel.RegisterUserViewModel
 import com.example.wera.presentation.viewModel.UpdateProfileViewModel
 import com.example.wera.presentation.views.Authentication.LoginScreen
 import com.example.wera.presentation.views.Authentication.RegisterScreen
+import com.example.wera.presentation.views.Contents.FavoritesScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.ui.theme.WeraTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,17 +66,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val preferences = getSharedPreferences("userIdPreference", Context.MODE_PRIVATE)
-                    Toast.makeText(this,"${ preferences.getString("userIdPreference", "")}", Toast.LENGTH_LONG).show()
+
+                    Toast.makeText(this,"${ messagesViewModel.userId}", Toast.LENGTH_LONG).show()
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
-                    val sharedUserPreferences = getSharedPreferences("userId", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
 
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
-                            MainScreen(postItemViewModel, sharedPreferences, sharedUserPreferences, getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
+                            MainScreen(postItemViewModel, sharedPreferences,  getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
                             , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel)
                         }
 
@@ -83,7 +84,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("login") {
-                            LoginScreen(loginUserViewModel, navController)
+                            LoginScreen(loginUserViewModel,getListingsViewModel, navController)
                         }
 
                         composable("register") {
@@ -94,6 +95,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+//    override fun onStart() {
+//        super.onStart()
+//
+//        setContent {
+//
+//        }
+//    }
     private fun getLoginToken(sharedPreferences: SharedPreferences): String? {
         return sharedPreferences.getString("loginPreference", null)
     }

@@ -1,6 +1,7 @@
 package com.example.wera.data.network
 
 import com.example.wera.domain.models.Categories
+import com.example.wera.domain.models.ChatId
 import com.example.wera.domain.models.DeleteListingResponse
 import com.example.wera.domain.models.GetUserData
 import com.example.wera.domain.models.IndividualListing
@@ -11,6 +12,9 @@ import com.example.wera.domain.models.LogoutResponse
 import com.example.wera.domain.models.Messages
 import com.example.wera.domain.models.PostItemData
 import com.example.wera.domain.models.PostItemResponse
+import com.example.wera.domain.models.PostMessage
+import com.example.wera.domain.models.PostMessageResponse
+import com.example.wera.domain.models.ReceiverIdResponse
 import com.example.wera.domain.models.RegisterRequest
 import com.example.wera.domain.models.RegisterResponse
 import com.example.wera.domain.models.UpdateProfileData
@@ -22,6 +26,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RegisterUser{
     @POST("register")
@@ -47,8 +52,6 @@ interface PostItem{
     @POST("listing")
     suspend fun post(@Body postItemData : PostItemData) : Response<PostItemResponse>
 }
-
-
 
 interface GetPosts{
     @GET("listing")
@@ -88,5 +91,25 @@ interface GetCategories{
 //messages
 interface GetMessages{
     @GET("messages")
-    suspend fun getMessages() : Messages
+    suspend fun getMessages(@Query("userId") userId: String) : Messages
+}
+
+interface GetSpecificMessage{
+    @GET("message")
+    suspend fun getMessage(@Query("chatId") chatId:String) : Messages
+}
+
+interface PostMessageInterface{
+    @POST("messages")
+    suspend fun postMessage(@Body postMessage : PostMessage) : Response<PostMessageResponse>
+}
+
+interface GetChatIdInterface{
+    @GET("chatId")
+    suspend  fun getChatId(@Query("senderId") senderId:String, @Query("receiverId") receiverId:String) : ChatId
+}
+
+interface GetReceiverIdInterface{
+    @GET("receiverId")
+    suspend fun getReceiverId(@Query("userId") userId: String, @Query("chatId") chatId : String) : ReceiverIdResponse
 }

@@ -1,5 +1,6 @@
 package com.example.wera.presentation.viewModel
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +16,7 @@ import javax.security.auth.login.LoginException
 
 
 @HiltViewModel
-class PostItemViewModel @Inject constructor(private val postItemUseCase: PostItemUseCase) : ViewModel() {
+class PostItemViewModel @Inject constructor(private val postItemUseCase: PostItemUseCase, private val sharedPreferences: SharedPreferences,) : ViewModel() {
 
     private val _postItem = MutableLiveData<PostItemResponse>()
 
@@ -24,17 +25,20 @@ class PostItemViewModel @Inject constructor(private val postItemUseCase: PostIte
     private val _postItemSuccess = MutableLiveData<Boolean>()
     val postItemSuccess : LiveData<Boolean> get() = _postItemSuccess
 
+    val userId = sharedPreferences.getString("userIdPreference", "") ?: ""
+
     suspend fun postItem(
         name: String,
         description : String,
         location : String,
         amount : String,
         category : Int,
-        status : Int
+        status : Int,
+        image:String
 
     ) : PostItemResponse{
         try {
-            return postItemUseCase.postItemUseCase(name, description, location, amount, category, status)
+            return postItemUseCase.postItemUseCase(name, description, location, amount, category, status, image)
 
         }catch (e: SocketTimeoutException) {
             Log.d("exception", "Timeout Exception")
