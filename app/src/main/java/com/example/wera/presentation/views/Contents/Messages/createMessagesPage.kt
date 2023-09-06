@@ -84,7 +84,6 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
-//                    contentAlignment = if (isCurrentUser) Alignment.End else Alignment.Start
                 ) {
                     Card(
                         elevation = CardDefaults.cardElevation(

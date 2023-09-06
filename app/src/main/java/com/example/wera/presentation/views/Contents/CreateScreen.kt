@@ -330,9 +330,7 @@ fun FavoritesScreen(
 
         Button(
             onClick = {
-
                     CoroutineScope(Dispatchers.Main).launch {
-
                         try {
                             // Get a reference to Firebase Storage
                             val selectedFile = imageUri?.let { uri ->
@@ -361,7 +359,6 @@ fun FavoritesScreen(
                                         it
                                     )
                                 }
-
                                 // Create the MultipartBody.Part
                                 val imageBody = requestBuilder?.let {
                                     MultipartBody.Part.createFormData("profile_image", selectedFile.name,
@@ -375,11 +372,9 @@ fun FavoritesScreen(
                                 // Initialize shared preferences
                                 val userId = postItemViewModel.userId
                                 val uniqueId = UUID.randomUUID().toString()
-
                                 // Generate a unique name for the image file using the current timestamp
                                 val fileName = "item_${System.currentTimeMillis()}.jpg"
                                 val imageRef = storageRef.child("item_images/$userId/$uniqueId/$fileName")
-
                                 val image = "item_images/$userId/$uniqueId/$fileName"
                                 val existingImageRef = storageRef.child("item_images/$userId")
 
