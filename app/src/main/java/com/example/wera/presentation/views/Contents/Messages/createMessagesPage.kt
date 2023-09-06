@@ -84,6 +84,7 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
+//                    contentAlignment = if (isCurrentUser) Alignment.End else Alignment.Start
                 ) {
                     Card(
                         elevation = CardDefaults.cardElevation(
@@ -99,7 +100,9 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
                             // Display the individual message here
                             Text(
                                 text = individualMessage.message ?: "No message",
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .align(Alignment.CenterStart.takeIf { !isCurrentUser } ?: Alignment.CenterEnd)
                             )
                         }
                     }
