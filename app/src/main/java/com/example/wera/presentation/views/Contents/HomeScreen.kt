@@ -56,8 +56,6 @@ fun HomeScreen(navController: NavController,
     val listings by getListingsViewModel.listingsDisplay.collectAsState()
 
 
-
-    val isSingleItem = listings.size == 1 // Check if there is only one item in the list
     val context = LocalContext.current
 
     fun onCardClicked(itemId: Int) {
@@ -72,9 +70,9 @@ fun HomeScreen(navController: NavController,
         TopNabBar()
     }
 
-        LazyColumn(
+      LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+           columns = GridCells.Adaptive(minSize = 128.dp)
         ) {
             items(listings.size) { index ->
                 val process = listings[index]
@@ -127,11 +125,7 @@ fun HomeScreen(navController: NavController,
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             )
                             process.description?.let { Text(text = it) }
-                            Text(
-                                text = "Category",
-                                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            )
-                            process.category?.let { Text(text = it) }
+
                             Text(
                                 text = "Budget",
                                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
@@ -141,58 +135,7 @@ fun HomeScreen(navController: NavController,
                         }
                     }
                     // Display the second card only if there is more than one item in the list
-                    if (!isSingleItem && index + 1 < listings.size) {
-                        val process2 = listings[index + 1]
-                        Card(
-                            modifier = Modifier.weight(1f),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable { process2.id?.let { onCardClicked(it) } },
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.worker),
-                                    contentDescription = "Icon Image"
-                                )
-                                Text(
-                                    text = "Name",
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 12.sp
-                                    )
-                                )
-                                process2.name?.let { Text(text = it) }
-                                Text(
-                                    text = "Description",
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 12.sp
-                                    )
-                                )
-                                process2.description?.let { Text(text = it) }
-                                Text(
-                                    text = "Category",
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 12.sp
-                                    )
-                                )
-                                process2.category?.let { Text(text = it) }
-                                Text(
-                                    text = "Amount",
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 12.sp
-                                    )
-                                )
-                                process2.amount?.let { Text(text = it) }
-                                // Add content for the second card here
-                            }
-                        }
-                    }
+
                 }
             }
         }
