@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -73,6 +74,13 @@ fun LoginScreen(
         "loginPreference",
         Context.MODE_PRIVATE
     )
+
+    val preventBackAction = remember { mutableStateOf(false) }
+
+    // Intercept the back button press
+    BackHandler(enabled = preventBackAction.value) {
+        // Empty block to prevent the back action
+    }
 
     Column(
         modifier = Modifier
@@ -165,16 +173,14 @@ fun LoginScreen(
 
                                               val editor = sharedPreferences.edit()
                                               editor.putString("loginPreference", response.token)
-                                              editor.apply()
+                                              editor.commit()
 
                                               val userId = sharedPreferences.edit()
                                               userId.putString("userIdPreference", response.user.userId)
-                                              userId.apply()
+                                              userId.commit()
 
-                                              getListingsViewModel.fetchListings()
-                                              val intent = Intent(context, MainActivity::class.java)
-                                              intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                              context.startActivity(intent)
+                                              // Close the application and restart it
+                                              (context as? MainActivity)?.restartApplication()
 
 
                                           } else {
@@ -217,6 +223,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
     }
+
 }
 
 
@@ -232,3 +239,4 @@ class PasswordVisualTransformation : VisualTransformation {
         return TransformedText(transformedText, OffsetMapping.Identity)
     }
 }
+

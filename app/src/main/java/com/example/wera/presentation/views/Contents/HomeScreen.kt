@@ -59,6 +59,8 @@ fun HomeScreen(navController: NavController,
 
 
     val context = LocalContext.current
+    val isRefreshing by getListingsViewModel.isRefreshing.collectAsState(false)
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing) // Use the isRefreshing property from the view model
 
     fun onCardClicked(itemId: Int) {
         getIndividualItemViewModel.fetchIndividualItem(itemId)
@@ -72,73 +74,86 @@ fun HomeScreen(navController: NavController,
         TopNabBar()
     }
 
-    LazyVerticalStaggeredGrid(
-            modifier = Modifier.fillMaxSize(),
-           columns = StaggeredGridCells.Fixed(2)
-        ) {
-            items(listings.size) { index ->
-                val process = listings[index]
-                Spacer(modifier = Modifier.height(20.dp))
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
+
+
+
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            // Trigger the refresh action here
+            Log.d("SwipeRefresh", "Refreshing...")
+            getListingsViewModel.refreshListings()
+        },
+        content = {
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier.fillMaxSize(),
+                columns = StaggeredGridCells.Fixed(2)
+            ) {
+                items(listings.size) { index ->
+                    val process = listings[index]
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .clickable { process.id?.let { onCardClicked(it) } },
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
                         ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable { process.id?.let { onCardClicked(it) } },
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
 
-                            val url = process?.image
-                            val imageUrlState = remember { mutableStateOf<String?>(null) }
+                                val url = process?.image
+                                val imageUrlState = remember { mutableStateOf<String?>(null) }
 
-                            LaunchedEffect(url) {
-                                val storage = FirebaseStorage.getInstance()
-                                val storageRef = url?.let { storage.getReference(it) }
-                                val imageUrl = storageRef?.downloadUrl?.await()?.toString()
+                                LaunchedEffect(url) {
+                                    val storage = FirebaseStorage.getInstance()
+                                    val storageRef = url?.let { storage.getReference(it) }
+                                    val imageUrl = storageRef?.downloadUrl?.await()?.toString()
 
-                                imageUrlState.value = imageUrl
+                                    imageUrlState.value = imageUrl
 
-                                Log.d("GetUserListingsViewModel", "Fetching image URL for storage location: $imageUrl")
-                            }
-                            imageUrlState.value?.let { imageUrl ->
-                                Image(
-                                    painter = rememberImagePainter(imageUrl),
-                                    contentDescription = "Listing Image",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(120.dp)
+                                    Log.d("GetUserListingsViewModel", "Fetching image URL for storage location: $imageUrl")
+                                }
+                                imageUrlState.value?.let { imageUrl ->
+                                    Image(
+                                        painter = rememberImagePainter(imageUrl),
+                                        contentDescription = "Listing Image",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(120.dp)
+                                    )
+                                }
+
+
+                                Text(
+                                    text = "Task Name",
+                                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 )
+                                process.name?.let { Text(text = it) }
+                                Text(
+                                    text = "Description",
+                                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                )
+                                process.description?.let { Text(text = it) }
+
+                                Text(
+                                    text = "Budget",
+                                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                )
+                                process.amount?.let { Text(text = it) }
+                                // Add other content for the card here
                             }
-
-
-                            Text(
-                                text = "Task Name",
-                                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            )
-                            process.name?.let { Text(text = it) }
-                            Text(
-                                text = "Description",
-                                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            )
-                            process.description?.let { Text(text = it) }
-
-                            Text(
-                                text = "Budget",
-                                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            )
-                            process.amount?.let { Text(text = it) }
-                            // Add other content for the card here
                         }
-                    }
-                    // Display the second card only if there is more than one item in the list
 
+                    }
                 }
             }
         }
-    }
+    )
+}
+

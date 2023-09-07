@@ -1,6 +1,9 @@
 package com.example.wera
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
@@ -67,11 +70,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    Toast.makeText(this,"${ messagesViewModel.userId}", Toast.LENGTH_LONG).show()
+
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
 
+                    Toast.makeText(this,"$loginToken", Toast.LENGTH_LONG).show()
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
@@ -96,15 +100,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//
-//        setContent {
-//
-//        }
-//    }
+
     private fun getLoginToken(sharedPreferences: SharedPreferences): String? {
         return sharedPreferences.getString("loginPreference", null)
     }
+
+    fun restartApplication() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
+        System.exit(0)
+    }
+
 }
 
