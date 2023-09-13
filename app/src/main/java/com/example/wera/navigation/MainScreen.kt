@@ -110,7 +110,8 @@ fun BottomBar(navController: NavHostController){
         BottomBarScreen.Home,
         BottomBarScreen.Favorite,
         BottomBarScreen.Messages,
-        BottomBarScreen.Profile
+        BottomBarScreen.MapItem,
+        BottomBarScreen.Profile,
     )
 
     val navStackBackStackEntry by navController.currentBackStackEntryAsState()

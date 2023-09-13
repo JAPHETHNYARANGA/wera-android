@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,7 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
     var message by remember { mutableStateOf("") }
     val context = LocalContext.current
     val senderId = messagesViewModel.userId
+    val listState = rememberLazyListState()
 
     val receiverId =
         remember {
@@ -55,11 +58,13 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
     }
 
 
-    //clear messages each time a person leaves the create message screen
-    DisposableEffect(Unit) {
-        messagesViewModel.fetchMessages()
-        onDispose {
-            messagesViewModel.clearIndividualMessages()
+
+
+    LaunchedEffect(Unit) {
+
+        val lastIndex = messagesViewModel.showIndividualMessages.value.size - 1
+        if (lastIndex >= 0) {
+            listState.scrollToItem(lastIndex)
         }
     }
 
@@ -70,8 +75,9 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
     ) {
         LazyColumn (
             modifier = Modifier
-                .weight(1f)
-                ){
+                .weight(1f),
+            state = listState
+        ){
             items(messagesViewModel.showIndividualMessages.value) { individualMessage ->
                 val isCurrentUser = individualMessage.sender_id == messagesViewModel.userId
                 val cardColor = if (isCurrentUser) {
@@ -135,7 +141,9 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
                                 ).let { response ->
                                     if (response.success) {
                                         Toast.makeText(context, "Message sent successfully", Toast.LENGTH_LONG).show()
-
+                                        
+                                        messagesViewModel.clearIndividualMessages()
+                                        navController.navigate("message")
                                     } else {
                                         Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
                                     }

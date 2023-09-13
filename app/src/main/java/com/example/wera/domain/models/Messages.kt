@@ -3,8 +3,6 @@ package com.example.wera.domain.models
 data class Messages(
     val success : Boolean,
     val messages : List<message>,
-    val user: MessageUser
-
 )
 
 data class  message(
@@ -15,9 +13,12 @@ data class  message(
     val message : String?,
     val created_at : String?,
     val updated_at : String?,
+    val user : MessageUser?
 
 )
 
 data class MessageUser(
-    val name: String
+    val name: String,
+    val userId :String,
+    val profile : String
 )

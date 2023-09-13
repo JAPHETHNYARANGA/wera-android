@@ -196,11 +196,11 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Row(modifier = Modifier.fillMaxWidth()) {
-                            Column {
-                                IconButton(onClick = { /* Handle Edit button click here */ }) {
-                                    Icon(Icons.Default.Edit, contentDescription = "Edit")
-                                }
-                            }
+//                            Column {
+//                                IconButton(onClick = { /* Handle Edit button click here */ }) {
+//                                    Icon(Icons.Default.Edit, contentDescription = "Edit")
+//                                }
+//                            }
                             Column {
                                 IconButton(onClick = {
                                     showDialog.value = true

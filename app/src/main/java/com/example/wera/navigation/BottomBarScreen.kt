@@ -43,6 +43,12 @@ sealed class BottomBarScreen(
         icon = R.drawable.profile,
         icon_focused = R.drawable.profile,
     )
+    object OtherProfile: BottomBarScreen(
+        route = "OtherProfile",
+        title = "Profile",
+        icon = R.drawable.profile,
+        icon_focused = R.drawable.profile,
+    )
 
     object Edit : BottomBarScreen(
         route ="edit",
@@ -56,5 +62,12 @@ sealed class BottomBarScreen(
         title = "individualItem",
         icon = R.drawable.add,
         icon_focused = R.drawable.add
+    )
+
+    object MapItem : BottomBarScreen(
+        route ="map",
+        title = "map",
+        icon = R.drawable.location,
+        icon_focused = R.drawable.location
     )
 }

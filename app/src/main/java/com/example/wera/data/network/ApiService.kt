@@ -10,6 +10,7 @@ import com.example.wera.domain.models.ListingsData
 import com.example.wera.domain.models.LoginResponse
 import com.example.wera.domain.models.LogoutResponse
 import com.example.wera.domain.models.Messages
+import com.example.wera.domain.models.OtherProfile
 import com.example.wera.domain.models.PostItemData
 import com.example.wera.domain.models.PostItemResponse
 import com.example.wera.domain.models.PostMessage
@@ -81,6 +82,11 @@ interface UpdateProfile{
 interface GetUser{
     @GET("getuser")
     suspend fun getUser() : GetUserData
+}
+
+interface FetchProfile{
+    @GET("profile")
+    suspend fun fetchProfile(@Query("userId") userId:String): OtherProfile
 }
 
 interface GetCategories{

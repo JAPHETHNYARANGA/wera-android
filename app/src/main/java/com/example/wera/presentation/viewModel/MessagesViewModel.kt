@@ -15,11 +15,13 @@ import com.example.wera.domain.useCase.GetMessagesUseCase
 import com.example.wera.domain.useCase.GetReceiverIdUseCase
 import com.example.wera.domain.useCase.GetSpecificMessageUseCase
 import com.example.wera.domain.useCase.PostMessageUseCase
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
@@ -55,6 +57,8 @@ class MessagesViewModel @Inject constructor(
 
     val iRefreshing : StateFlow<Boolean> get() = _isRefreshing
 
+    val imageUrlLiveData: LiveData<String> = MutableLiveData()
+
 
 
     init {
@@ -69,12 +73,12 @@ class MessagesViewModel @Inject constructor(
                     // After retrieving the userId from SharedPreferences
                     val userId = sharedPreferences.getString("userIdPreference", "") ?: ""
 
-
                     // Make the network request using the userId as a query parameter
                     val messagesData = getMessagesUseCase.getMessagesUseCase(userId)
                     val messages = messagesData.messages
 
                     _messages.value = messages
+
                 }catch (e: Exception){
                     Log.d("Failure Fetching messages", "${e.message}")
                 }finally {
@@ -147,12 +151,14 @@ class MessagesViewModel @Inject constructor(
     }
 
 
-    fun refreshMessages(){
+    fun refreshMessages(chatId: String){
         fetchMessages()
+        showIndividualMessage(chatId)
     }
 
     fun clearIndividualMessages() {
         _individualMessage.value = emptyList() // Clear the individual messages list
+       
     }
 }
 class MessageException(message: String) : Exception(message)

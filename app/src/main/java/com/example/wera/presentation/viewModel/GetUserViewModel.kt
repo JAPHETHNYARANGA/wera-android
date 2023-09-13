@@ -47,6 +47,7 @@ class GetUserViewModel @Inject constructor(private val getUserRepository: GetUse
                 val user: UserProfile? = profileData.user
                 _user.value = user
 
+
                 user?.profile?.let { storageLocation ->
                     val storage = FirebaseStorage.getInstance()
                     val storageRef = storage.getReference(storageLocation)

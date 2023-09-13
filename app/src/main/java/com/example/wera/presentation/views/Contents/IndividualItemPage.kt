@@ -53,9 +53,13 @@ fun IndividualItemPage(
             imageUrl?.let { url ->
                 val painter = rememberImagePainter(url)
 
+                // Adjust the modifier for the Image to cover half the screen
                 Image(
                     painter = painter,
-                    contentDescription = "Profile Image"
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp) // You can adjust the height as needed
                 )
             }
 

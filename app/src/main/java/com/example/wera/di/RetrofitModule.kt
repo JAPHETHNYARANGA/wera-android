@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.wera.data.network.DeleteAccount
 import com.example.wera.data.network.DeleteListing
+import com.example.wera.data.network.FetchProfile
 import com.example.wera.data.network.GetCategories
 import com.example.wera.data.network.GetChatIdInterface
 import com.example.wera.data.network.GetIndividualListing
@@ -21,6 +22,7 @@ import com.example.wera.data.network.RegisterUser
 import com.example.wera.data.network.UpdateProfile
 import com.example.wera.domain.repository.DeleteAccountRepository
 import com.example.wera.domain.repository.DeleteListingRepository
+import com.example.wera.domain.repository.FetchProfileRepository
 import com.example.wera.domain.repository.GetCategoriesDataRepository
 import com.example.wera.domain.repository.GetChatIdRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
@@ -37,6 +39,7 @@ import com.example.wera.domain.repository.RegisterUserRepository
 import com.example.wera.domain.repository.UpdateProfileRepository
 import com.example.wera.domain.useCase.DeleteAccountUseCase
 import com.example.wera.domain.useCase.DeleteListingUseCase
+import com.example.wera.domain.useCase.FetchProfileUseCase
 import com.example.wera.domain.useCase.GetCategoriesDataUseCase
 import com.example.wera.domain.useCase.GetIndividualItemUseCase
 import com.example.wera.domain.useCase.GetListingUseCase
@@ -94,7 +97,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.werrah.com/api/")
+            .baseUrl("https://fdeb-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -185,6 +188,11 @@ object RetrofitModule {
     fun providesGetReceiverId(retrofit: Retrofit) : GetReceiverIdInterface{
         return retrofit.create(GetReceiverIdInterface::class.java)
     }
+    @Provides
+    fun provideFetchOtherProfile(retrofit: Retrofit) : FetchProfile{
+        return retrofit.create(FetchProfile::class.java)
+    }
+
     //Repository
 
     @Provides
@@ -267,6 +275,11 @@ object RetrofitModule {
     fun providesGetReceiverIdRepository(getReceiverIdInterface: GetReceiverIdInterface) : GetReceiverIdRepository{
         return GetReceiverIdRepository(getReceiverIdInterface)
     }
+
+    @Provides
+    fun provideFetchProfileRepository(fetchProfile: FetchProfile) : FetchProfileRepository{
+        return FetchProfileRepository(fetchProfile)
+    }
     //UseCase
 
     @Provides
@@ -342,5 +355,10 @@ object RetrofitModule {
     @Provides
     fun providesGetReceiverIdUseCase(getReceiverIdRepository: GetReceiverIdRepository) : GetReceiverIdUseCase{
         return GetReceiverIdUseCase(getReceiverIdRepository)
+    }
+
+    @Provides
+    fun providesFetchProfileUseCase(fetchProfileRepository: FetchProfileRepository) : FetchProfileUseCase{
+        return FetchProfileUseCase(fetchProfileRepository)
     }
 }
