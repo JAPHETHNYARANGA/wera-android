@@ -97,7 +97,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://fdeb-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://9c63-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

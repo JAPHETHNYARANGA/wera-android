@@ -110,7 +110,7 @@ fun BottomBar(navController: NavHostController){
         BottomBarScreen.Home,
         BottomBarScreen.Favorite,
         BottomBarScreen.Messages,
-        BottomBarScreen.MapItem,
+//        BottomBarScreen.MapItem,
         BottomBarScreen.Profile,
     )
 

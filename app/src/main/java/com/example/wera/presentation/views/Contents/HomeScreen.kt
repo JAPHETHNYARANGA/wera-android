@@ -119,15 +119,17 @@ fun HomeScreen(navController: NavController,
 
                                     Log.d("GetUserListingsViewModel", "Fetching image URL for storage location: $imageUrl")
                                 }
-                                imageUrlState.value?.let { imageUrl ->
-                                    Image(
-                                        painter = rememberImagePainter(imageUrl),
-                                        contentDescription = "Listing Image",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(120.dp)
-                                    )
-                                }
+                                Image(
+                                    painter = if (!imageUrlState.value.isNullOrBlank()) {
+                                        rememberImagePainter(imageUrlState.value!!)
+                                    } else {
+                                        painterResource(id = R.drawable.worker) // Replace 'R.drawable.worker' with your default image resource
+                                    },
+                                    contentDescription = "Listing Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(120.dp)
+                                )
 
 
                                 Text(
