@@ -141,7 +141,21 @@ fun HomeScreen(navController: NavController,
                                     text = "Description",
                                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 )
-                                process.description?.let { Text(text = it) }
+
+                                val description = process.description?.take(20)
+                                val displayDescription = if ((process.description?.length
+                                        ?: 0) > 150
+                                ) {
+                                    "$description..."
+                                } else {
+                                    description
+                                }
+
+                                Text(
+                                    text = displayDescription.orEmpty(), // Use `orEmpty` to handle null descriptions
+                                    style = TextStyle(fontSize = 12.sp)
+                                )
+
 
                                 Text(
                                     text = "Budget",
