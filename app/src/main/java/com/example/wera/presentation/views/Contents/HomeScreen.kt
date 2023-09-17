@@ -89,6 +89,7 @@ fun HomeScreen(navController: NavController,
                 modifier = Modifier.fillMaxSize(),
                 columns = StaggeredGridCells.Fixed(2)
             ) {
+
                 items(listings.size) { index ->
                     val process = listings[index]
                     Spacer(modifier = Modifier.height(20.dp))
@@ -113,18 +114,21 @@ fun HomeScreen(navController: NavController,
                                 LaunchedEffect(url) {
                                     val storage = FirebaseStorage.getInstance()
                                     val storageRef = url?.let { storage.getReference(it) }
-                                    val imageUrl = storageRef?.downloadUrl?.await()?.toString()
 
-                                    imageUrlState.value = imageUrl
-
-                                    Log.d("GetUserListingsViewModel", "Fetching image URL for storage location: $imageUrl")
+                                    try {
+                                        val imageUrl = storageRef?.downloadUrl?.await()?.toString()
+                                        imageUrlState.value = imageUrl
+                                        Log.d("GetUserListingsViewModel", "Fetching image URL for storage location: $imageUrl")
+                                    } catch (e: Exception) {
+                                        // Handle any exceptions that may occur while fetching the image URL
+                                        Log.e("GetUserListingsViewModel", "Error fetching image URL: ${e.message}")
+                                    }
                                 }
+
                                 Image(
-                                    painter = if (!imageUrlState.value.isNullOrBlank()) {
-                                        rememberImagePainter(imageUrlState.value!!)
-                                    } else {
-                                        painterResource(id = R.drawable.worker) // Replace 'R.drawable.worker' with your default image resource
-                                    },
+                                    painter = imageUrlState.value?.let {
+                                        rememberImagePainter(it)
+                                    } ?: painterResource(id = R.drawable.worker), // Use default image if imageUrl is null or empty
                                     contentDescription = "Listing Image",
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -142,9 +146,9 @@ fun HomeScreen(navController: NavController,
                                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 )
 
-                                val description = process.description?.take(20)
+                                val description = process.description?.take(40)
                                 val displayDescription = if ((process.description?.length
-                                        ?: 0) > 150
+                                        ?: 0) > 40
                                 ) {
                                     "$description..."
                                 } else {

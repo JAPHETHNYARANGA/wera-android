@@ -25,6 +25,7 @@ import com.example.wera.presentation.views.Contents.MessagesScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.presentation.views.Contents.Profile.OtherProfile
 import com.example.wera.presentation.views.Contents.Profile.ProfilePage
+import com.example.wera.presentation.views.Contents.favorites.Favorites
 
 
 @Composable
@@ -53,7 +54,7 @@ fun BottomNavGraph(
             HomeScreen(navController, getListingsViewModel, getIndividualItemViewModel)
         }
 
-        composable(route =BottomBarScreen.Favorite.route)
+        composable(route =BottomBarScreen.CreateListing.route)
         {
             FavoritesScreen(postItemViewModel, navController, getListingsViewModel,  getUserListingsViewModel, getCategoriesViewModel)
         }
@@ -91,8 +92,6 @@ fun BottomNavGraph(
         {
             location()
         }
-
-
     }
 
 }

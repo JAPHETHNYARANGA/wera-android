@@ -80,8 +80,7 @@ fun OtherProfile(navController: NavController, updateProfileViewModel: UpdatePro
                 .weight(3f)
                 .background(Color.White) // Background color for illustration
         ) {
-            Text(text = "${imageUrl}",)
-            Text(text = "${userProfileState.value?.user?.profile}",)
+
             Text(text = "${userProfileState.value?.user?.rating ?: "No rating found"}",)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "${userProfileState.value?.user?.name}", style = TextStyle(color = Color.Red, fontWeight = FontWeight.Bold, fontSize = 20.sp))
@@ -89,8 +88,6 @@ fun OtherProfile(navController: NavController, updateProfileViewModel: UpdatePro
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(text = "${userProfileState.value?.user?.bio}", )
-
-
 
         }
     }

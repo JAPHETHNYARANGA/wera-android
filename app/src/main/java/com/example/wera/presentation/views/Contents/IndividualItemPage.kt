@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
@@ -49,6 +52,59 @@ fun IndividualItemPage(
 
     if (itemData != null && itemData.success == true) {
         Column(modifier = Modifier.padding(end = 10.dp, start = 10.dp)) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Wrap the first Button in a Box
+                Box(
+                    modifier = Modifier.weight(1f), // Adjust weight as needed to center horizontally
+                    contentAlignment = Alignment.Center
+                ) {
+                    Button(onClick = {
+                     //TODO
+
+                    }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_eye_off),
+                                contentDescription = "message Icon",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "${itemData.listing?.request_count ?: 0}")
+                        }
+                    }
+                }
+
+                // Wrap the second Button in a Box
+                Box(
+                    modifier = Modifier.weight(1f), // Adjust weight as needed to center horizontally
+                    contentAlignment = Alignment.Center
+                ) {
+                    Button(onClick = {
+                        //TODO
+                    }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.favoritesliked),
+                                contentDescription = "contact Icon",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "Favorite")
+                        }
+                    }
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
 
             imageUrl?.let { url ->
                 val painter = rememberImagePainter(url)
@@ -67,64 +123,75 @@ fun IndividualItemPage(
 
             // Add other Text components for other properties of the listing
             // For example:
-            Text(text = "Description: ${itemData.listing?.description}")
-            Text(text = "Location: ${itemData.listing?.Location}")
-            Text(text = "Budget: ${itemData.listing?.amount}")
+            Text(text = "Description", style = TextStyle(fontWeight = FontWeight.Bold))
+            Text(text = "${itemData.listing?.description}")
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(text = "Location", style = TextStyle(fontWeight = FontWeight.Bold))
+            Text(text = "${itemData.listing?.Location}")
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Budget", style = TextStyle(fontWeight = FontWeight.Bold))
+            Text(text = "${itemData.listing?.amount}")
 
             // Add other properties as needed
 
             Spacer(modifier = Modifier.height(16.dp))
+            if(itemData.user?.userId != messagesViewModel.userId) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(onClick = {
+                        val receiverId = itemData?.user?.userId
+                        val senderId = messagesViewModel.userId
+                        if (receiverId != null) {
+                            messagesViewModel.getChatId(senderId, receiverId)
+                        }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(onClick = {
-                    val receiverId = itemData?.user?.userId
-                    val senderId = messagesViewModel.userId
-                    if (receiverId != null) {
-                        messagesViewModel.getChatId(senderId,receiverId)
+                        if (chatId != null) {
+                            Log.d("ChatId data", chatId)
+                        }
+                        if (chatId != null) {
+                            messagesViewModel.showIndividualMessage(chatId)
+                        }
+
+                        navController.navigate("createMessage/$receiverId")
+
+                    }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.message), // Replace with your icon resource
+                                contentDescription = "message Icon",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "Send Message")
+                        }
                     }
 
-                    if (chatId != null) {
-                        Log.d("ChatId data", chatId)
-                    }
-                    if (chatId != null) {
-                        messagesViewModel.showIndividualMessage(chatId)
+
+                    Button(onClick = {
+                        val phoneNumber = itemData?.user?.phone ?: ""
+                        if (phoneNumber.isNotBlank()) {
+                            val intent = Intent(Intent.ACTION_DIAL)
+                            intent.data = Uri.parse("tel:$phoneNumber")
+                            context.startActivity(intent)
+                        }
+                    }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.phone), // Replace with your icon resource
+                                contentDescription = "contact Icon",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "Contact")
+                        }
                     }
 
-                    navController.navigate("createMessage/$receiverId")
 
-                }) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.message), // Replace with your icon resource
-                            contentDescription = "message Icon",
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Send Message")
-                    }
-                }
-
-                Button(onClick = {
-                    val phoneNumber = itemData?.user?.phone ?: ""
-                    if (phoneNumber.isNotBlank()) {
-                        val intent = Intent(Intent.ACTION_DIAL)
-                        intent.data = Uri.parse("tel:$phoneNumber")
-                        context.startActivity(intent)
-                    }
-                }) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.phone), // Replace with your icon resource
-                            contentDescription = "contact Icon",
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Contact")
-                    }
                 }
             }
         }

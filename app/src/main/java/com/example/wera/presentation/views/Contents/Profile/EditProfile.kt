@@ -121,8 +121,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
         ) {
             Column {
                 // Show the image with the "+" icon below it
-
-
                 imageUri?.let {
                     if (Build.VERSION.SDK_INT < 28) {
                         bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
@@ -140,8 +138,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                     }
                 }
 
-
-
                 Spacer(modifier = Modifier.height(10.dp))
                 IconButton(
                     onClick = {
@@ -155,7 +151,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                 }
             }
         }
-
         Row(modifier = Modifier.fillMaxWidth()) {
             Column() {
                 OutlinedTextField(
@@ -174,7 +169,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                             }
                         }
                 )
-
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -224,7 +218,6 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                             }
                         }
                 )
-
                 OutlinedTextField(
                     value = occupation,
                     onValueChange = { occupation = it },
@@ -362,6 +355,8 @@ fun EditProfile(navController: NavController, updateProfileViewModel: UpdateProf
                                 }
 
 
+                            }else{
+                                Toast.makeText(context, "Please upload a profile picture to continue", Toast.LENGTH_LONG).show()
                             }
                         } else {
                             // Show a message indicating that all required fields must be filled

@@ -108,9 +108,9 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
 fun BottomBar(navController: NavHostController){
     val screens = listOf(
         BottomBarScreen.Home,
-        BottomBarScreen.Favorite,
+        BottomBarScreen.CreateListing,
         BottomBarScreen.Messages,
-//        BottomBarScreen.MapItem,
+        BottomBarScreen.MapItem,
         BottomBarScreen.Profile,
     )
 

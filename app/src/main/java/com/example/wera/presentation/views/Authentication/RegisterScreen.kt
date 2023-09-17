@@ -6,10 +6,12 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.wera.R
 import com.example.wera.presentation.viewModel.RegisterUserViewModel
+import com.example.wera.presentation.views.shared.LoadingSpinner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,132 +63,145 @@ fun RegisterScreen(
         "loginPreference",
         Context.MODE_PRIVATE
     )
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .padding(16.dp)
-    ) {
+    var isLoading by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.fillMaxSize()){
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(16.dp)
         ) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(
-                    text = "Werrah",
-                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 30.sp)
-                )
-            }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(
-                    text = "Work without limits",
-                    style = TextStyle(fontWeight = FontWeight.Bold)
-                )
-            }
-            Image(painter = painterResource(id = R.drawable.worker), contentDescription ="Worker image" )
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Username") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xFF1A202C),
-                    unfocusedBorderColor = Color(0xFF1A202C)
-                ),
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xFF1A202C),
-                    unfocusedBorderColor = Color(0xFF1A202C)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth(),
-
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xFF1A202C),
-                    unfocusedBorderColor = Color(0xFF1A202C)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth(),
-                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                        val eyeIcon = if (passwordVisibility) R.drawable.ic_eye_off else R.drawable.ic_eye
-                        Icon(
-                            painter = painterResource(id = eyeIcon),
-                            contentDescription = if (passwordVisibility) "Hide Password" else "Show Password"
-                        )
-                    }
+                    .fillMaxHeight()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(
+                        text = "Werrah",
+                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 30.sp)
+                    )
                 }
-            )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(
+                        text = "Work without limits",
+                        style = TextStyle(fontWeight = FontWeight.Bold)
+                    )
+                }
+                Image(painter = painterResource(id = R.drawable.worker), contentDescription ="Worker image" )
 
-            Spacer(modifier = Modifier.height(5.dp))
-        }
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-            Button(
-                onClick = {
-                    if(name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()){
-                        CoroutineScope(Dispatchers.Main).launch {
-                            try {
-                                registerUserViewModel.registerUser(
-                                    name,
-                                    email, password
-                                )?.let { response ->
-                                    Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-                                    if (response.success) {
-                                        navController.navigate("login")
-                                    } else {
-                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-                                Log.d("Login","${e.message}")
-                                // You can also log the exception for debugging purposes
-                                e.printStackTrace()
-                            }
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Username") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF1A202C),
+                        unfocusedBorderColor = Color(0xFF1A202C)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF1A202C),
+                        unfocusedBorderColor = Color(0xFF1A202C)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+
+                    )
+                Spacer(modifier = Modifier.height(5.dp))
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF1A202C),
+                        unfocusedBorderColor = Color(0xFF1A202C)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                            val eyeIcon = if (passwordVisibility) R.drawable.ic_eye_off else R.drawable.ic_eye
+                            Icon(
+                                painter = painterResource(id = eyeIcon),
+                                contentDescription = if (passwordVisibility) "Hide Password" else "Show Password"
+                            )
                         }
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                Text(text = "Register")
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
             }
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+                Button(
+                    onClick = {
+                        if(name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()){
+                            isLoading = true
+                            CoroutineScope(Dispatchers.Main).launch {
+                                try {
+                                    registerUserViewModel.registerUser(
+                                        name,
+                                        email, password
+                                    )?.let { response ->
+                                        Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+                                        if (response.success) {
+                                            navController.navigate("login")
+                                        } else {
+                                            Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                                    Log.d("Login","${e.message}")
+                                    // You can also log the exception for debugging purposes
+                                    e.printStackTrace()
+                                }finally {
+                                    isLoading = false
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Text(text = "Register")
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Already have an account? Login here",
+                    style = TextStyle(fontWeight = FontWeight.Bold),
+
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .clickable {
+                            navController.navigate("login")
+                        }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Already have an account? Login here",
-                style = TextStyle(fontWeight = FontWeight.Bold),
-
-                modifier = Modifier.padding(end = 8.dp)
-                    .clickable {
-                        navController.navigate("login")
-                    }
-            )
+        if (isLoading) {
+            LoadingSpinner(isLoading = true)
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
     }
+
 }
 
 

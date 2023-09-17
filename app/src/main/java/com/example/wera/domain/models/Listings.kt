@@ -16,6 +16,7 @@ data class Listings(
     val amount : String?,
     val status: Int?,
     val image : String?,
+    val request_count : Int?,
     val user : UserData
 )
 

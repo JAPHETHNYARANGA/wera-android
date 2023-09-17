@@ -23,6 +23,7 @@ import com.example.wera.navigation.BottomBarScreen
 import com.example.wera.navigation.MainScreen
 import com.example.wera.presentation.viewModel.DeleteAccountViewModel
 import com.example.wera.presentation.viewModel.DeleteListingViewModel
+import com.example.wera.presentation.viewModel.ForgetPasswordViewModel
 import com.example.wera.presentation.viewModel.GetCategoriesViewModel
 import com.example.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.example.wera.presentation.viewModel.GetListingsViewModel
@@ -39,6 +40,8 @@ import com.example.wera.presentation.views.Authentication.RegisterScreen
 import com.example.wera.presentation.views.Contents.FavoritesScreen
 import com.example.wera.presentation.views.Contents.Profile.EditProfile
 import com.example.wera.ui.theme.WeraTheme
+import com.google.firebase.FirebaseApp
+//import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -58,6 +61,7 @@ class MainActivity : ComponentActivity() {
     private val logoutViewModel : LogoutViewModel by viewModels()
     private val deleteAccountViewModel : DeleteAccountViewModel by viewModels()
     private val messagesViewModel : MessagesViewModel by viewModels()
+    private val forgetPasswordViewModel : ForgetPasswordViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,12 +74,17 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
+                    // Initialize Firebase
+//                    FirebaseApp.initializeApp(this);
+//
+//                    // Enable Crashlytics
+//                    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+
 
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
                     val loginToken = getLoginToken(sharedPreferences)
 
-                    Toast.makeText(this,"$loginToken", Toast.LENGTH_LONG).show()
 
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
@@ -88,7 +97,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("login") {
-                            LoginScreen(loginUserViewModel,getListingsViewModel, navController)
+                            LoginScreen(loginUserViewModel, forgetPasswordViewModel, navController)
                         }
 
                         composable("register") {

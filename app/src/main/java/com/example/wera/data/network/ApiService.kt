@@ -3,6 +3,8 @@ package com.example.wera.data.network
 import com.example.wera.domain.models.Categories
 import com.example.wera.domain.models.ChatId
 import com.example.wera.domain.models.DeleteListingResponse
+import com.example.wera.domain.models.ForgotPassword
+import com.example.wera.domain.models.ForgotPasswordResponse
 import com.example.wera.domain.models.GetUserData
 import com.example.wera.domain.models.IndividualListing
 import com.example.wera.domain.models.Listings
@@ -44,6 +46,10 @@ interface Logout {
     suspend fun logout(): Response<LogoutResponse>
 }
 
+interface ForgetPasswordInterface{
+    @POST("forgot-password")
+    suspend fun forgetPassword(@Body forgotPassword: ForgotPassword) : Response<ForgotPasswordResponse>
+}
 interface DeleteAccount{
     @GET("deleteUser")
     suspend fun deleteAccount() : Response<LogoutResponse>

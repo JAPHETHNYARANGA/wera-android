@@ -165,16 +165,21 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
+                        Text(text = "Listing", style = TextStyle(fontWeight = FontWeight.Bold))
                         process.name?.let {
                             Text(
                                 text = it,
                                 fontStyle = FontStyle.Normal,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
                                 textAlign = TextAlign.Center
                             )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_eye_off),
+                            contentDescription = "Viewers",
+                            modifier = Modifier.size(20.dp) // Adjust the size as needed
+                        )
                         process.category?.let {
                             Text(
                                 text = it,
@@ -184,9 +189,9 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                                 textAlign = TextAlign.Center
                             )
                         }
-                        process.description?.let {
+                        process.request_count?.let {
                             Text(
-                                text = it,
+                                text = it.toString(),
                                 fontStyle = FontStyle.Normal,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
@@ -196,16 +201,10 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Row(modifier = Modifier.fillMaxWidth()) {
-//                            Column {
-//                                IconButton(onClick = { /* Handle Edit button click here */ }) {
-//                                    Icon(Icons.Default.Edit, contentDescription = "Edit")
-//                                }
-//                            }
+
                             Column {
                                 IconButton(onClick = {
                                     showDialog.value = true
-
-
                                 }) {
                                     Icon(Icons.Default.Delete, contentDescription = "Delete")
                                 }
@@ -262,7 +261,6 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
             }
         }
 
-
         Spacer(modifier = Modifier.height(65.dp))
 
         Column() {
@@ -305,6 +303,7 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                             // Add any additional logic here, such as navigating to the login screen
                             val intent = Intent(context, MainActivity::class.java)
                             context.startActivity(intent)
+
                             Toast.makeText(context, "Account deleted successfully", Toast.LENGTH_SHORT).show()
                         }else{
                             Toast.makeText(context, "delete Account failed", Toast.LENGTH_SHORT).show()

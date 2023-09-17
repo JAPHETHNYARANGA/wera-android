@@ -58,6 +58,7 @@ import com.example.wera.presentation.viewModel.GetCategoriesViewModel
 import com.example.wera.presentation.viewModel.GetListingsViewModel
 import com.example.wera.presentation.viewModel.GetUserListingsViewModel
 import com.example.wera.presentation.viewModel.PostItemViewModel
+import com.example.wera.presentation.views.shared.LoadingSpinner
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
@@ -110,382 +111,383 @@ fun FavoritesScreen(
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
         }
+    var isLoading by remember { mutableStateOf(false) }
+    var isPosting by remember { mutableStateOf(false) }
 
 
     fun statusToString(status: Int): String {
         return when (status) {
-            1 -> "Job Creator"
-            2 -> "Job Seeker"
+            1 -> "Post Listing"
+            2 -> "Post My Skill"
             else -> "" // Handle the default case or any other status values you might have
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(
-                rememberScrollState()
-            )
-    ) {
-
-
-        Row(
+    Box(modifier = Modifier.fillMaxSize()){
+        Column(
             modifier = Modifier
-                .padding(top = 20.dp, bottom = 20.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .verticalScroll(
+                    rememberScrollState()
+                )
         ) {
-            Column {
-                // Show the image with the "+" icon below it
 
+            Row(
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 20.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column {
+                    // Show the image with the "+" icon below it
+                    imageUri?.let {
+                        if (Build.VERSION.SDK_INT < 28) {
+                            bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                        } else {
+                            val source = ImageDecoder.createSource(context.contentResolver, it)
+                            bitmap.value = ImageDecoder.decodeBitmap(source)
+                        }
 
-                imageUri?.let {
-                    if (Build.VERSION.SDK_INT < 28) {
-                        bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-                    } else {
-                        val source = ImageDecoder.createSource(context.contentResolver, it)
-                        bitmap.value = ImageDecoder.decodeBitmap(source)
+                        bitmap.value?.let { btm ->
+                            ItemImage(
+                                bitmap = btm,
+                                contentDescription = null,
+                                modifier = Modifier // Provide the correct type of the modifier here
+                            )
+                        }
                     }
 
-                    bitmap.value?.let { btm ->
-                        ItemImage(
-                            bitmap = btm,
-                            contentDescription = null,
-                            modifier = Modifier // Provide the correct type of the modifier here
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IconButton(
+                        onClick = {
+                            launcher.launch("image/*")
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add),
+                            contentDescription = "Add Image"
                         )
                     }
                 }
-
-
-
-                Spacer(modifier = Modifier.height(10.dp))
-                IconButton(
-                    onClick = {
-                        launcher.launch("image/*")
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.add),
-                        contentDescription = "Add Image"
-                    )
-                }
             }
-        }
 
 
+            Text(
+                text = "Status", // Add the label text here
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            )
 
-        Text(
-            text = "Status", // Add the label text here
-
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
-        )
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
-            // Align the ExposedDropdownMenuBox to center
-            ExposedDropdownMenuBox(
-                expanded = isExpandedStatus,
-                onExpandedChange = { isExpandedStatus = it },
-                modifier = Modifier.align(Alignment.Center)
-            ) {
-                OutlinedTextField(
-                    value = TextFieldValue(statusToString(status)),
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStatus)
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier.menuAnchor()
-                )
-
-                ExposedDropdownMenu(
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+                // Align the ExposedDropdownMenuBox to center
+                ExposedDropdownMenuBox(
                     expanded = isExpandedStatus,
-                    onDismissRequest = { isExpandedStatus = false }
+                    onExpandedChange = { isExpandedStatus = it },
+                    modifier = Modifier.align(Alignment.Center)
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Job Creator") },
-                        onClick = {
-                            status = 1
-                            isExpandedStatus = false
-                        }
+                    OutlinedTextField(
+                        value = TextFieldValue(statusToString(status)),
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStatus)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
                     )
-                    DropdownMenuItem(
-                        text = { Text("Job Seeker") },
-                        onClick = {
-                            status = 2
-                            isExpandedStatus = false
-                        }
-                    )
-                }
-            }
-        }
 
-
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Task Name") },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF1A202C),
-                unfocusedBorderColor = Color(0xFF1A202C)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF1A202C),
-                unfocusedBorderColor = Color(0xFF1A202C)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-
-        )
-
-
-        OutlinedTextField(
-            value = location,
-            onValueChange = { location = it },
-            label = { Text("Location") },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF1A202C),
-                unfocusedBorderColor = Color(0xFF1A202C)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-
-        )
-
-
-
-        Text(
-            text = "Categories", // Add the label text here
-
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
-        )
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
-            // Align the ExposedDropdownMenuBox to center
-            ExposedDropdownMenuBox(
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it },
-                modifier = Modifier.align(Alignment.Center)
-            ) {
-                OutlinedTextField(
-                    value = TextFieldValue(selectedCategory?.name ?: ""),
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    modifier = Modifier.menuAnchor()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = false }
-                ) {
-                    // Populate the dropdown menu with categories data
-                    categoriesData.forEach { category ->
+                    ExposedDropdownMenu(
+                        expanded = isExpandedStatus,
+                        onDismissRequest = { isExpandedStatus = false }
+                    ) {
                         DropdownMenuItem(
-                            text = { Text(category.name ?: "") },
+                            text = { Text("Post Listing") },
                             onClick = {
-                                selectedCategory = category // Store the selected category data
-                                isExpanded = false
+                                status = 1
+                                isExpandedStatus = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Post my Skill") },
+                            onClick = {
+                                status = 2
+                                isExpandedStatus = false
                             }
                         )
                     }
                 }
             }
-        }
+
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Task Name") },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF1A202C),
+                    unfocusedBorderColor = Color(0xFF1A202C)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Description") },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF1A202C),
+                    unfocusedBorderColor = Color(0xFF1A202C)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+
+            OutlinedTextField(
+                value = location,
+                onValueChange = { location = it },
+                label = { Text("Location") },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF1A202C),
+                    unfocusedBorderColor = Color(0xFF1A202C)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
 
 
-        OutlinedTextField(
-            value = amount,
-            onValueChange = { amount = it },
-            label = { Text("Budget") },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF1A202C),
-                unfocusedBorderColor = Color(0xFF1A202C)
-            ),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            modifier = Modifier
+            Text(
+                text = "Categories", // Add the label text here
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            )
+
+            Box(modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp)) {
+                // Align the ExposedDropdownMenuBox to center
+                ExposedDropdownMenuBox(
+                    expanded = isExpanded,
+                    onExpandedChange = { isExpanded = it },
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    OutlinedTextField(
+                        value = TextFieldValue(selectedCategory?.name ?: ""),
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
 
-        )
+                    ExposedDropdownMenu(
+                        expanded = isExpanded,
+                        onDismissRequest = { isExpanded = false }
+                    ) {
+                        // Populate the dropdown menu with categories data
+                        categoriesData.forEach { category ->
+                            DropdownMenuItem(
+                                text = { Text(category.name ?: "") },
+                                onClick = {
+                                    selectedCategory = category // Store the selected category data
+                                    isExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
 
-        Button(
-            onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        try {
-                            // Get a reference to Firebase Storage
-                            val selectedFile = imageUri?.let { uri ->
-                                try {
-                                    val inputStream = context.contentResolver.openInputStream(uri)
-                                    val byteArray = inputStream?.readBytes()
-                                    inputStream?.close()
 
-                                    if (byteArray != null) {
-                                        // Save the ByteArray to a temporary file
-                                        val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
-                                        tempFile.writeBytes(byteArray)
-                                        tempFile
-                                    } else {
+            OutlinedTextField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = { Text("Budget") },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF1A202C),
+                    unfocusedBorderColor = Color(0xFF1A202C)
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+
+            )
+
+            Button(
+                onClick = {
+                    if(!isPosting){
+                        isPosting = true
+                        CoroutineScope(Dispatchers.Main).launch {
+                            try {
+                                // Get a reference to Firebase Storage
+                                val selectedFile = imageUri?.let { uri ->
+                                    try {
+                                        val inputStream = context.contentResolver.openInputStream(uri)
+                                        val byteArray = inputStream?.readBytes()
+                                        inputStream?.close()
+
+                                        if (byteArray != null) {
+                                            // Save the ByteArray to a temporary file
+                                            val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
+                                            tempFile.writeBytes(byteArray)
+                                            tempFile
+                                        } else {
+                                            null
+                                        }
+                                    } catch (e: Exception) {
                                         null
                                     }
-                                } catch (e: Exception) {
-                                    null
                                 }
-                            }
-                            // Check if the Bitmap is not null
-                            if (selectedFile != null) {
-                                // Convert Bitmap to ByteArray
-                                val requestBuilder = selectedFile?.let {
-                                    RequestBody.create("image/*".toMediaTypeOrNull(),
-                                        it
-                                    )
+                                if(name.isEmpty()){
+                                    Toast.makeText(context, "Name cannot be empty", Toast.LENGTH_LONG).show()
+                                }else if(description.isEmpty()){
+                                    Toast.makeText(context, "Description cannot be empty", Toast.LENGTH_LONG).show()
+                                }else if (location.isEmpty()){
+                                    Toast.makeText(context, "Location cannot be empty", Toast.LENGTH_LONG).show()
+                                }else if (amount.isEmpty()){
+                                    Toast.makeText(context, "Amount cannot be empty", Toast.LENGTH_LONG).show()
                                 }
-                                // Create the MultipartBody.Part
-                                val imageBody = requestBuilder?.let {
-                                    MultipartBody.Part.createFormData("profile_image", selectedFile.name,
-                                        it
-                                    )
-                                }
-                                // Get a reference to Firebase Storage
-                                val storage = FirebaseStorage.getInstance()
-                                val storageRef = storage.reference
 
-                                // Initialize shared preferences
-                                val userId = postItemViewModel.userId
-                                val uniqueId = UUID.randomUUID().toString()
-                                // Generate a unique name for the image file using the current timestamp
-                                val fileName = "item_${System.currentTimeMillis()}.jpg"
-                                val imageRef = storageRef.child("item_images/$userId/$uniqueId/$fileName")
-                                val image = "item_images/$userId/$uniqueId/$fileName"
-                                val existingImageRef = storageRef.child("item_images/$userId")
-
-                                existingImageRef.listAll().addOnSuccessListener { listResult ->
-                                    val allTasks = mutableListOf<Task<Void>>()
-                                    listResult.items.forEach { item ->
-                                        val deleteTask = item.delete()
-                                        allTasks.add(deleteTask)
+                                // Check if the Bitmap is not null
+                                if (selectedFile != null) {
+                                    // Convert Bitmap to ByteArray
+                                    val requestBuilder = selectedFile?.let {
+                                        RequestBody.create("image/*".toMediaTypeOrNull(),
+                                            it
+                                        )
                                     }
+                                    // Create the MultipartBody.Part
+                                    val imageBody = requestBuilder?.let {
+                                        MultipartBody.Part.createFormData("profile_image", selectedFile.name,
+                                            it
+                                        )
+                                    }
+                                    // Get a reference to Firebase Storage
+                                    val storage = FirebaseStorage.getInstance()
+                                    val storageRef = storage.reference
 
-                                    Tasks.whenAllComplete(allTasks).addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            Log.d("FirebaseStorage", "All images inside folder deleted successfully")
-                                            // Upload the image to Firebase Storage
-                                            val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+                                    // Initialize shared preferences
+                                    val userId = postItemViewModel.userId
+                                    val uniqueId = UUID.randomUUID().toString()
+                                    // Generate a unique name for the image file using the current timestamp
+                                    val fileName = "item_${System.currentTimeMillis()}.jpg"
+                                    val imageRef = storageRef.child("item_images/$userId/$uniqueId/$fileName")
+                                    val image = "item_images/$userId/$uniqueId/$fileName"
+                                    val existingImageRef = storageRef.child("item_images/$userId")
 
-                                            uploadTask.continueWithTask { task ->
-                                                if (!task.isSuccessful) {
-                                                    task.exception?.let {
-                                                        throw it
+                                    existingImageRef.listAll().addOnSuccessListener { listResult ->
+                                        val allTasks = mutableListOf<Task<Void>>()
+                                        listResult.items.forEach { item ->
+                                            val deleteTask = item.delete()
+                                            allTasks.add(deleteTask)
+                                        }
+
+                                        Tasks.whenAllComplete(allTasks).addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                Log.d("FirebaseStorage", "All images inside folder deleted successfully")
+                                                // Upload the image to Firebase Storage
+                                                val uploadTask = imageRef.putFile(Uri.fromFile(selectedFile))
+
+                                                uploadTask.continueWithTask { task ->
+                                                    if (!task.isSuccessful) {
+                                                        task.exception?.let {
+                                                            throw it
+                                                        }
                                                     }
-                                                }
-                                                imageRef.downloadUrl
-                                            }.addOnCompleteListener { task ->
-                                                if (task.isSuccessful) {
-                                                    val imageUrl = task.result.toString()
-                                                    Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
+                                                    imageRef.downloadUrl
+                                                }.addOnCompleteListener { task ->
+                                                    if (task.isSuccessful) {
+                                                        val imageUrl = task.result.toString()
+                                                        Toast.makeText(context, "Image upload success", Toast.LENGTH_SHORT).show()
 
-                                                    CoroutineScope(Dispatchers.Main).launch {
-                                                        postItemViewModel.postItem(
-                                                            name,
-                                                            description,
-                                                            location,
-                                                            amount,
-                                                            2,
-                                                            status,
-                                                            image
-                                                        ).let { response ->
+                                                        CoroutineScope(Dispatchers.Main).launch {
+                                                            postItemViewModel.postItem(
+                                                                name,
+                                                                description,
+                                                                location,
+                                                                amount,
+                                                                2,
+                                                                status,
+                                                                image
+                                                            ).let { response ->
 
-                                                            Toast.makeText(
-                                                                context,
-                                                                response.message,
-                                                                Toast.LENGTH_LONG
-                                                            ).show()
-
-                                                            if (response.success) {
-
-                                                                navController.navigate("home")
-                                                                getListingsViewModel.fetchListings()
-                                                                getUserListingsViewModel.fetchListings()
-
-
-                                                            } else {
                                                                 Toast.makeText(
                                                                     context,
                                                                     response.message,
                                                                     Toast.LENGTH_LONG
                                                                 ).show()
+
+                                                                if (response.success) {
+                                                                    navController.navigate("home")
+                                                                    getListingsViewModel.fetchListings()
+                                                                    getUserListingsViewModel.fetchListings()
+
+                                                                } else {
+                                                                    Toast.makeText(
+                                                                        context,
+                                                                        response.message,
+                                                                        Toast.LENGTH_LONG
+                                                                    ).show()
+                                                                }
+
                                                             }
-
                                                         }
+
+                                                    } else {
+                                                        // Handle unsuccessful image upload
+                                                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
                                                     }
-
-                                                } else {
-                                                    // Handle unsuccessful image upload
-                                                    Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
                                                 }
+                                                uploadTask.addOnFailureListener { exception ->
+                                                    Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
+                                                    Toast.makeText(context, "Something went wrong, check connection and try again", Toast.LENGTH_LONG).show()
+                                                }
+                                            } else {
+                                                Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
                                             }
-
-                                            uploadTask.addOnFailureListener { exception ->
-                                                Log.e("FirebaseStorage", "Upload failed: ${exception.message}")
-                                                Toast.makeText(context, "Something went wrong, check connection and try again", Toast.LENGTH_LONG).show()
-                                            }
-                                        } else {
-                                            Log.e("FirebaseStorage", "Failed to delete images inside folder: ${task.exception}")
                                         }
+                                    }.addOnFailureListener { exception ->
+                                        Log.e("FirebaseStorage", "Failed to list items in folder: $exception")
                                     }
-                                }.addOnFailureListener { exception ->
-                                    Log.e("FirebaseStorage", "Failed to list items in folder: $exception")
+                                }else{
+                                    Toast.makeText(context,"Please upload an image to continue", Toast.LENGTH_LONG).show()
                                 }
 
 
-
-
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                                Log.d("create listing","${e.message}")
+                                // You can also log the exception for debugging purposes
+                                e.printStackTrace()
+                            }finally {
+                                isPosting = false
 
                             }
-
-
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-                            Log.d("Login","${e.message}")
-                            // You can also log the exception for debugging purposes
-                            e.printStackTrace()
                         }
                     }
 
-
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-//            colors = ButtonDefaults.buttonColors(
-//                contentColor = Color.White, // Set the text color to white
-//                containerColor = Color(0xFF1A202C)
-//            )
-        ) {
-            Text(text = "Create")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                if (isPosting) {
+                    // Show loading spinner if posting is in progress
+                    LoadingSpinner(isLoading = true)
+                } else {
+                    // Show "Create" text when not posting
+                    Text(text = "Create")
+                }
+            }
         }
 
     }
-
 }
 
 

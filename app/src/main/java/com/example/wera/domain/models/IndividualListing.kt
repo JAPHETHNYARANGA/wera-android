@@ -16,6 +16,7 @@ data class listingData(
     val category : String?,
     val amount : String?,
     val image : String?,
+    val request_count : Int?,
     val created_at: String?,
     val updated_at : String?
 )

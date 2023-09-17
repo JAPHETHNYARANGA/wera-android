@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.example.wera.data.network.DeleteAccount
 import com.example.wera.data.network.DeleteListing
 import com.example.wera.data.network.FetchProfile
+import com.example.wera.data.network.ForgetPasswordInterface
 import com.example.wera.data.network.GetCategories
 import com.example.wera.data.network.GetChatIdInterface
 import com.example.wera.data.network.GetIndividualListing
@@ -20,9 +21,11 @@ import com.example.wera.data.network.PostItem
 import com.example.wera.data.network.PostMessageInterface
 import com.example.wera.data.network.RegisterUser
 import com.example.wera.data.network.UpdateProfile
+import com.example.wera.domain.models.ForgotPassword
 import com.example.wera.domain.repository.DeleteAccountRepository
 import com.example.wera.domain.repository.DeleteListingRepository
 import com.example.wera.domain.repository.FetchProfileRepository
+import com.example.wera.domain.repository.ForgetPasswordRepository
 import com.example.wera.domain.repository.GetCategoriesDataRepository
 import com.example.wera.domain.repository.GetChatIdRepository
 import com.example.wera.domain.repository.GetIndividualItemRepository
@@ -40,6 +43,7 @@ import com.example.wera.domain.repository.UpdateProfileRepository
 import com.example.wera.domain.useCase.DeleteAccountUseCase
 import com.example.wera.domain.useCase.DeleteListingUseCase
 import com.example.wera.domain.useCase.FetchProfileUseCase
+import com.example.wera.domain.useCase.ForgetPasswordUseCase
 import com.example.wera.domain.useCase.GetCategoriesDataUseCase
 import com.example.wera.domain.useCase.GetIndividualItemUseCase
 import com.example.wera.domain.useCase.GetListingUseCase
@@ -63,7 +67,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 
@@ -97,7 +100,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://9c63-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://79a4-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -117,6 +120,11 @@ object RetrofitModule {
     @Provides
     fun provideDeleteUserInterface(retrofit: Retrofit) : DeleteAccount{
         return retrofit.create(DeleteAccount::class.java)
+    }
+
+    @Provides
+    fun provideForgetPasswordInterface(retrofit: Retrofit) : ForgetPasswordInterface{
+        return retrofit.create(ForgetPasswordInterface::class.java)
     }
 
     @Provides
@@ -209,6 +217,10 @@ object RetrofitModule {
     fun provideDeleteAccountRepository(deleteAccount: DeleteAccount): DeleteAccountRepository{
         return DeleteAccountRepository(deleteAccount)
     }
+    @Provides
+    fun provideForgetPasswordRepository(forgetPasswordInterface: ForgetPasswordInterface):ForgetPasswordRepository{
+        return ForgetPasswordRepository(forgetPasswordInterface)
+    }
 
     @Provides
     fun provideRegisterRepository(registerUser: RegisterUser):RegisterUserRepository{
@@ -295,6 +307,11 @@ object RetrofitModule {
     @Provides
     fun provideDeleteAccountUseCase(deleteAccountRepository: DeleteAccountRepository) : DeleteAccountUseCase{
         return DeleteAccountUseCase(deleteAccountRepository)
+    }
+
+    @Provides
+    fun providesForgetPasswordUseCase(forgetPasswordRepository: ForgetPasswordRepository) : ForgetPasswordUseCase{
+        return ForgetPasswordUseCase(forgetPasswordRepository)
     }
 
     @Provides
