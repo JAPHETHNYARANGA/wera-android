@@ -290,7 +290,7 @@ fun FavoritesScreen(
                                 onClick = {
                                     selectedCity = city // Store the selected city as text
                                     isExpandedStatus1 = false
-                                }
+                                },
                             )
                         }
                     }
