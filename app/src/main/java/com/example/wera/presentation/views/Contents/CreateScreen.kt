@@ -99,6 +99,9 @@ fun FavoritesScreen(
         mutableStateOf(0)
     }
 
+    var isExpandedStatus1 by remember { mutableStateOf(false) }
+    var selectedCity by remember { mutableStateOf<String?>(null) }
+
     var selectedCategory by remember { mutableStateOf<CategoriesData?>(null) }
     // Observe the categories data from the view model
     val categoriesData by getCategoriesViewModel.categoriesDisplay.collectAsState()
@@ -245,6 +248,54 @@ fun FavoritesScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             )
+
+            Text(
+                text = "Location", // Add the label text here
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            )
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+                // Align the ExposedDropdownMenuBox to center
+                ExposedDropdownMenuBox(
+                    expanded = isExpandedStatus1,
+                    onExpandedChange = { isExpandedStatus1 = it },
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    OutlinedTextField(
+                        value = TextFieldValue(text = selectedCity ?: "Select a city"),
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStatus1)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isExpandedStatus1,
+                        onDismissRequest = { isExpandedStatus1 = false }
+                    ) {
+                        val cities = listOf(
+                            "Kajiado", "Kiambu", "Mombasa", "Nairobi", "Nakuru", "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu",
+                            "Garisa", "Homa Bay", "Isiolo", "Kakamega", "Kericho", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru",
+                            "Migori", "Muranga", "Nandi", "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita Taveta", "Tana River", "Tharaka-Nithi", "Trans-Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
+                        )
+
+                        cities.forEach { city ->
+                            DropdownMenuItem(
+                                text = { Text(city) },
+                                onClick = {
+                                    selectedCity = city // Store the selected city as text
+                                    isExpandedStatus1 = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
 
             OutlinedTextField(
                 value = location,
@@ -489,8 +540,6 @@ fun FavoritesScreen(
 
     }
 }
-
-
 @Composable
 fun ItemImage(bitmap: Bitmap?, contentDescription: String?, modifier: Modifier) {
     Box(
