@@ -25,6 +25,7 @@ import com.example.wera.domain.models.UpdateProfileResponse
 import com.example.wera.domain.models.UserLogin
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -51,7 +52,7 @@ interface ForgetPasswordInterface{
     suspend fun forgetPassword(@Body forgotPassword: ForgotPassword) : Response<ForgotPasswordResponse>
 }
 interface DeleteAccount{
-    @GET("deleteUser")
+    @DELETE("deleteUser")
     suspend fun deleteAccount() : Response<LogoutResponse>
 }
 

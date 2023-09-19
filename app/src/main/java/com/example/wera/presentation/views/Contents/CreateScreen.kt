@@ -176,52 +176,52 @@ fun FavoritesScreen(
             }
 
 
-            Text(
-                text = "Status", // Add the label text here
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
-            )
-
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)) {
-                // Align the ExposedDropdownMenuBox to center
-                ExposedDropdownMenuBox(
-                    expanded = isExpandedStatus,
-                    onExpandedChange = { isExpandedStatus = it },
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
-                    OutlinedTextField(
-                        value = TextFieldValue(statusToString(status)),
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStatus)
-                        },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        modifier = Modifier.menuAnchor()
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = isExpandedStatus,
-                        onDismissRequest = { isExpandedStatus = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Post Listing") },
-                            onClick = {
-                                status = 1
-                                isExpandedStatus = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Post my Skill") },
-                            onClick = {
-                                status = 2
-                                isExpandedStatus = false
-                            }
-                        )
-                    }
-                }
-            }
+//            Text(
+//                text = "Status", // Add the label text here
+//                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+//            )
+//
+//            Box(modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp)) {
+//                // Align the ExposedDropdownMenuBox to center
+//                ExposedDropdownMenuBox(
+//                    expanded = isExpandedStatus,
+//                    onExpandedChange = { isExpandedStatus = it },
+//                    modifier = Modifier.align(Alignment.Center)
+//                ) {
+//                    OutlinedTextField(
+//                        value = TextFieldValue(statusToString(status)),
+//                        onValueChange = {},
+//                        readOnly = true,
+//                        trailingIcon = {
+//                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStatus)
+//                        },
+//                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+//                        modifier = Modifier.menuAnchor()
+//                    )
+//
+//                    ExposedDropdownMenu(
+//                        expanded = isExpandedStatus,
+//                        onDismissRequest = { isExpandedStatus = false }
+//                    ) {
+//                        DropdownMenuItem(
+//                            text = { Text("Post Listing") },
+//                            onClick = {
+//                                status = 1
+//                                isExpandedStatus = false
+//                            }
+//                        )
+//                        DropdownMenuItem(
+//                            text = { Text("Post my Skill") },
+//                            onClick = {
+//                                status = 2
+//                                isExpandedStatus = false
+//                            }
+//                        )
+//                    }
+//                }
+//            }
 
             OutlinedTextField(
                 value = name,
@@ -289,6 +289,7 @@ fun FavoritesScreen(
                                 text = { Text(city) },
                                 onClick = {
                                     selectedCity = city // Store the selected city as text
+                                    location = city
                                     isExpandedStatus1 = false
                                 },
                             )
@@ -297,18 +298,7 @@ fun FavoritesScreen(
                 }
             }
 
-            OutlinedTextField(
-                value = location,
-                onValueChange = { location = it },
-                label = { Text("Location") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color(0xFF1A202C),
-                    unfocusedBorderColor = Color(0xFF1A202C)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
+
 
 
             Text(
@@ -463,8 +453,8 @@ fun FavoritesScreen(
                                                                 description,
                                                                 location,
                                                                 amount,
-                                                                2,
-                                                                status,
+                                                                selectedCategory?.id ?: 0,
+                                                                1,
                                                                 image
                                                             ).let { response ->
 

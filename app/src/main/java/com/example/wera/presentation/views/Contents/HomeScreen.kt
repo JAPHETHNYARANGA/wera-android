@@ -64,7 +64,6 @@ fun HomeScreen(navController: NavController,
 
     fun onCardClicked(itemId: Int) {
         getIndividualItemViewModel.fetchIndividualItem(itemId)
-        Toast.makeText(context, "$itemId", Toast.LENGTH_SHORT).show()
         navController.navigate("individualItem")
     }
 

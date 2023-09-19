@@ -83,7 +83,7 @@ import java.nio.file.WatchEvent
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfilePage(navController: NavController, sharedPreferences: SharedPreferences, getUserViewModel: GetUserViewModel, getUserListingsViewModel: GetUserListingsViewModel,
-deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListingsViewModel, logoutViewModel : LogoutViewModel, deleteAccountViewModel: DeleteAccountViewModel){
+deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListingsViewModel, logoutViewModel : LogoutViewModel, deleteAccountViewModel: DeleteAccountViewModel) {
 
     val context = LocalContext.current
     val userDataState = getUserViewModel.userDisplay.collectAsState()
@@ -91,24 +91,30 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
     val userData = userDataState.value // Get the current value of the user data state
     val listings by getUserListingsViewModel.listingsDisplay.collectAsState()
     val showDialog = remember { mutableStateOf(false) }
+    val showDeleteDialog = remember { mutableStateOf(false) }
     val imageUrl by getUserViewModel.imageUrl.collectAsState()
 
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 16.dp, end = 16.dp)
-        .verticalScroll(
-            rememberScrollState()
-        )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 16.dp, end = 16.dp)
+            .verticalScroll(
+                rememberScrollState()
+            )
     ) {
 
-        Row(modifier = Modifier
-            .padding(top = 20.dp, bottom = 20.dp)
-            .fillMaxWidth() , horizontalArrangement =  Arrangement.Center) {
-
-            Row(modifier = Modifier
+        Row(
+            modifier = Modifier
                 .padding(top = 20.dp, bottom = 20.dp)
-                .fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 20.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
 
                 imageUrl?.let { url ->
                     val painter = rememberImagePainter(url)
@@ -123,9 +129,6 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                 }
             }
         }
-
-
-
 
         // Display the user data attributes here
         userData?.name?.let {
@@ -211,7 +214,9 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
 
                                 if (showDialog.value) {
                                     AlertDialog(
-                                        onDismissRequest = { showDialog.value = false }, // Dismiss the dialog
+                                        onDismissRequest = {
+                                            showDialog.value = false
+                                        }, // Dismiss the dialog
                                         title = { Text(text = "Do you want to delete? ${process.name}") },
                                         confirmButton = {
                                             TextButton(
@@ -223,11 +228,35 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
 
                                                     CoroutineScope(Dispatchers.Main).launch {
                                                         process.id?.let {
-                                                            deleteListingViewModel.deleteListing(it)?.let { response ->
-                                                                // Handle the response
-                                                                Toast.makeText(context, "${process.name} deleted successfully", Toast.LENGTH_LONG).show()
+                                                            deleteListingViewModel.deleteListing(it)
+                                                                ?.let { response ->
+                                                                    // Handle the response
+                                                                    val storage = FirebaseStorage.getInstance()
+                                                                    val storageRef = storage.reference
 
-                                                            }
+                                                                    val desertRef =
+                                                                        process.image?.let { it1 ->
+                                                                            storageRef.child(
+                                                                                it1
+                                                                            )
+                                                                        }
+
+                                                                    desertRef?.delete()
+                                                                        ?.addOnSuccessListener {
+                                                                            Toast.makeText(
+                                                                                context,
+                                                                                "${process.name} deleted successfully",
+                                                                                Toast.LENGTH_LONG
+                                                                            ).show()
+                                                                        }?.addOnFailureListener {
+                                                                            Toast.makeText(
+                                                                                context,
+                                                                                " deleted failed",
+                                                                                Toast.LENGTH_LONG
+                                                                            ).show()
+                                                                        }
+                                                                    // Create a storage reference from our app
+                                                                }
                                                         }
                                                     }
                                                     getUserListingsViewModel.fetchListings()
@@ -242,7 +271,9 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
                                         },
                                         dismissButton = {
                                             TextButton(
-                                                onClick = { showDialog.value = false }, // Dismiss the dialog
+                                                onClick = {
+                                                    showDialog.value = false
+                                                }, // Dismiss the dialog
                                                 colors = ButtonDefaults.textButtonColors(
 //                                                contentColor = MaterialTheme.colors.primary
                                                 )
@@ -264,55 +295,123 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
         Spacer(modifier = Modifier.height(65.dp))
 
         Column() {
-                Button(modifier = Modifier.fillMaxWidth(),onClick = {
+            Button(modifier = Modifier.fillMaxWidth(), onClick = {
 
-                    navController.navigate( BottomBarScreen.Edit.route)
-                }) {
-                    Text(text = "Edit")
+                navController.navigate(BottomBarScreen.Edit.route)
+            }) {
+                Text(text = "Edit")
 
-                }
-
-                Spacer(modifier =Modifier.height(10.dp))
-
-                Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val response = logoutViewModel.logoutUser()
-                        if (response.isSuccessful) {
-                            clearToken(sharedPreferences)
-
-                            // Add any additional logic here, such as navigating to the login screen
-                            val intent = Intent(context, MainActivity::class.java)
-                            context.startActivity(intent)
-                        } else {
-                            // Handle error, if any
-                            Toast.makeText(context, "Logout failed", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }) {
-                    Text(text = "Logout")
-                }
-
-                Spacer(modifier =Modifier.height(10.dp))
-                Button( modifier = Modifier.fillMaxWidth(),onClick = {
-
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val response = deleteAccountViewModel.deleteAccount()
-                        if (response.isSuccessful){
-                            clearToken(sharedPreferences)
-
-                            // Add any additional logic here, such as navigating to the login screen
-                            val intent = Intent(context, MainActivity::class.java)
-                            context.startActivity(intent)
-
-                            Toast.makeText(context, "Account deleted successfully", Toast.LENGTH_SHORT).show()
-                        }else{
-                            Toast.makeText(context, "delete Account failed", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }) {
-                    Text(text = "Delete Account")
-                }
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val response = logoutViewModel.logoutUser()
+                    if (response.isSuccessful) {
+                        clearToken(sharedPreferences)
+
+                        // Add any additional logic here, such as navigating to the login screen
+                        val intent = Intent(context, MainActivity::class.java)
+                        context.startActivity(intent)
+                    } else {
+                        // Handle error, if any
+                        Toast.makeText(context, "Logout failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }) {
+                Text(text = "Logout")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    // Show the delete account dialog when the button is clicked
+                    showDialog.value = true
+                }
+            ) {
+                Text(text = "Delete Account")
+            }
+
+            // Display the delete account dialog based on the showDialog state
+            if (showDeleteDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteDialog.value = false },
+                    title = { Text(text = "Do you want to delete your account?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showDeleteDialog.value = false // Dismiss the dialog
+                                // Perform the deletion operation here
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    val response = deleteAccountViewModel.deleteAccount()
+                                    if (response.isSuccessful) {
+                                        clearToken(sharedPreferences)
+
+                                        // Handle the response
+                                        val storage = FirebaseStorage.getInstance()
+                                        val storageRef = storage.reference
+
+                                        // Delete listing images
+//                                        for (listing in listings) {
+//                                            listing.image?.let { imageName ->
+//                                                val listingImageRef =
+//                                                    storage.getReferenceFromUrl(imageName)
+//                                                listingImageRef.delete()
+//                                                    .addOnSuccessListener {
+//                                                        Log.d("ListingImage", "$imageName deleted")
+//                                                    }
+//                                                    .addOnFailureListener { e ->
+//                                                        Log.e("ListingImage", "Error deleting $imageName: $e")
+//                                                    }
+//                                            }
+//                                        }
+
+                                        val desertRef =
+                                            userData?.profile?.let { it1 ->
+                                                storageRef.child(
+                                                    it1
+                                                )
+                                            }
+
+                                        desertRef?.delete()
+                                            ?.addOnSuccessListener {
+                                               Log.d("Data", "all data deleted")
+                                            }?.addOnFailureListener {
+                                                Log.d("Data", "delete Fail")
+                                            }
+                                        val intent = Intent(context, MainActivity::class.java)
+                                        context.startActivity(intent)
+                                        Toast.makeText(
+                                            context,
+                                            "Account deleted successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Delete Account failed",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(text = "Yes")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showDialog.value = false },
+                        ) {
+                            Text(text = "No")
+                        }
+                    },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                )
+            }
+        }
     }
 }
 
