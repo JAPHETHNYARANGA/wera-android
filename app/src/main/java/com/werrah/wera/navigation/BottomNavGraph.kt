@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.werrah.wera.presentation.viewModel.DeleteAccountViewModel
 import com.werrah.wera.presentation.viewModel.DeleteListingViewModel
+import com.werrah.wera.presentation.viewModel.FavoritesViewModel
 import com.werrah.wera.presentation.viewModel.GetCategoriesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.werrah.wera.presentation.viewModel.GetListingsViewModel
@@ -15,6 +16,7 @@ import com.werrah.wera.presentation.viewModel.GetUserViewModel
 import com.werrah.wera.presentation.viewModel.LogoutViewModel
 import com.werrah.wera.presentation.viewModel.MessagesViewModel
 import com.werrah.wera.presentation.viewModel.PostItemViewModel
+import com.werrah.wera.presentation.viewModel.RemoveFromFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.UpdateProfileViewModel
 import com.werrah.wera.presentation.views.Contents.FavoritesScreen
 import com.werrah.wera.presentation.views.Contents.HomeScreen
@@ -41,7 +43,9 @@ fun BottomNavGraph(
     getCategoriesViewModel: GetCategoriesViewModel,
     logoutViewModel :LogoutViewModel,
     deleteAccountViewModel: DeleteAccountViewModel,
-    messagesViewModel : MessagesViewModel
+    messagesViewModel : MessagesViewModel,
+    favoritesViewModel :FavoritesViewModel,
+    removeFromFavoritesViewModel: RemoveFromFavoritesViewModel
 ){
 
     NavHost(
@@ -84,7 +88,7 @@ fun BottomNavGraph(
 
         composable(route = BottomBarScreen.IndividualItem.route)
         {
-            IndividualItemPage(navController ,  getIndividualItemViewModel, messagesViewModel )
+            IndividualItemPage(navController ,  getIndividualItemViewModel, messagesViewModel, favoritesViewModel, removeFromFavoritesViewModel )
         }
 
         composable(route = BottomBarScreen.MapItem.route)

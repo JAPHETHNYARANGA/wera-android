@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.werrah.wera.navigation.MainScreen
 import com.werrah.wera.presentation.viewModel.DeleteAccountViewModel
 import com.werrah.wera.presentation.viewModel.DeleteListingViewModel
+import com.werrah.wera.presentation.viewModel.FavoritesViewModel
 import com.werrah.wera.presentation.viewModel.ForgetPasswordViewModel
 import com.werrah.wera.presentation.viewModel.GetCategoriesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
@@ -30,6 +31,7 @@ import com.werrah.wera.presentation.viewModel.LogoutViewModel
 import com.werrah.wera.presentation.viewModel.MessagesViewModel
 import com.werrah.wera.presentation.viewModel.PostItemViewModel
 import com.werrah.wera.presentation.viewModel.RegisterUserViewModel
+import com.werrah.wera.presentation.viewModel.RemoveFromFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.UpdateProfileViewModel
 import com.werrah.wera.presentation.views.Authentication.LoginScreen
 import com.werrah.wera.presentation.views.Authentication.RegisterScreen
@@ -56,6 +58,8 @@ class MainActivity : ComponentActivity() {
     private val deleteAccountViewModel : DeleteAccountViewModel by viewModels()
     private val messagesViewModel : MessagesViewModel by viewModels()
     private val forgetPasswordViewModel : ForgetPasswordViewModel by viewModels()
+    private val favoritesViewModel : FavoritesViewModel by viewModels()
+    private val removeFromFavoritesViewModel : RemoveFromFavoritesViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,12 +72,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    // Initialize Firebase
-//                    FirebaseApp.initializeApp(this);
-//
-//                    // Enable Crashlytics
-//                    FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
-
 
                     val navController = rememberNavController()
                     val sharedPreferences = getSharedPreferences("loginPreference", Context.MODE_PRIVATE)
@@ -83,7 +81,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
                             MainScreen(postItemViewModel, sharedPreferences,  getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
-                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel)
+                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel, favoritesViewModel, removeFromFavoritesViewModel)
                         }
 
                         composable("edit") {

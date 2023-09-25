@@ -2,6 +2,7 @@ package com.werrah.wera.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.werrah.wera.data.network.AddToFavorites
 import com.werrah.wera.data.network.DeleteAccount
 import com.werrah.wera.data.network.DeleteListing
 import com.werrah.wera.data.network.FetchProfile
@@ -20,7 +21,9 @@ import com.werrah.wera.data.network.Logout
 import com.werrah.wera.data.network.PostItem
 import com.werrah.wera.data.network.PostMessageInterface
 import com.werrah.wera.data.network.RegisterUser
+import com.werrah.wera.data.network.RemoveFromFavorites
 import com.werrah.wera.data.network.UpdateProfile
+import com.werrah.wera.domain.repository.AddToFavoritesRepository
 import com.werrah.wera.domain.repository.DeleteAccountRepository
 import com.werrah.wera.domain.repository.DeleteListingRepository
 import com.werrah.wera.domain.repository.FetchProfileRepository
@@ -38,7 +41,9 @@ import com.werrah.wera.domain.repository.LoginUserRepository
 import com.werrah.wera.domain.repository.LogoutRepository
 import com.werrah.wera.domain.repository.PostMessageRepository
 import com.werrah.wera.domain.repository.RegisterUserRepository
+import com.werrah.wera.domain.repository.RemoveFromFavoritesRepository
 import com.werrah.wera.domain.repository.UpdateProfileRepository
+import com.werrah.wera.domain.useCase.AddToFavoritesUseCase
 import com.werrah.wera.domain.useCase.DeleteAccountUseCase
 import com.werrah.wera.domain.useCase.DeleteListingUseCase
 import com.werrah.wera.domain.useCase.FetchProfileUseCase
@@ -55,6 +60,7 @@ import com.werrah.wera.domain.useCase.LoginUserUseCase
 import com.werrah.wera.domain.useCase.LogoutUseCase
 import com.werrah.wera.domain.useCase.PostMessageUseCase
 import com.werrah.wera.domain.useCase.RegisterUserUseCase
+import com.werrah.wera.domain.useCase.RemoveFromFavoritesUseCase
 import com.werrah.wera.domain.useCase.UpdateProfileUseCase
 import dagger.Module
 import dagger.Provides
@@ -99,7 +105,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.werrah.com/api/")
+            .baseUrl("https://fef9-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -199,6 +205,15 @@ object RetrofitModule {
     fun provideFetchOtherProfile(retrofit: Retrofit) : FetchProfile{
         return retrofit.create(FetchProfile::class.java)
     }
+    @Provides
+    fun providesRemoveFromFavorites(retrofit: Retrofit) : RemoveFromFavorites{
+        return retrofit.create(RemoveFromFavorites::class.java)
+    }
+
+    @Provides
+    fun providesAddToFavorites(retrofit: Retrofit) : AddToFavorites{
+        return retrofit.create(AddToFavorites::class.java)
+    }
 
     //Repository
 
@@ -291,6 +306,18 @@ object RetrofitModule {
     fun provideFetchProfileRepository(fetchProfile: FetchProfile) : FetchProfileRepository{
         return FetchProfileRepository(fetchProfile)
     }
+
+    @Provides
+    fun provideRemoveFromFavoritesRepository(removeFromFavorites: RemoveFromFavorites) : RemoveFromFavoritesRepository{
+        return  RemoveFromFavoritesRepository(removeFromFavorites)
+    }
+
+    @Provides
+    fun provideAddToFavoritesRepository(addToFavorites: AddToFavorites) : AddToFavoritesRepository{
+        return  AddToFavoritesRepository(addToFavorites)
+    }
+
+
     //UseCase
 
     @Provides
@@ -376,5 +403,15 @@ object RetrofitModule {
     @Provides
     fun providesFetchProfileUseCase(fetchProfileRepository: FetchProfileRepository) : FetchProfileUseCase{
         return FetchProfileUseCase(fetchProfileRepository)
+    }
+
+    @Provides
+    fun providesAddToFavoritesUseCase(addToFavoritesRepository: AddToFavoritesRepository) : AddToFavoritesUseCase{
+        return AddToFavoritesUseCase(addToFavoritesRepository)
+    }
+
+    @Provides
+    fun providesRemoveFromFavoritesUseCase(removeFromFavoritesRepository: RemoveFromFavoritesRepository) : RemoveFromFavoritesUseCase{
+        return RemoveFromFavoritesUseCase(removeFromFavoritesRepository)
     }
 }

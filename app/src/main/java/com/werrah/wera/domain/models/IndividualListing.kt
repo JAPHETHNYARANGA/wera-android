@@ -4,7 +4,8 @@ data class IndividualListing(
     val success : Boolean?,
     val message: String?,
     val listing : listingData?,
-    val user : IndUserData?
+    val user : IndUserData?,
+    val favorite : Boolean?
 )
 
 data class listingData(

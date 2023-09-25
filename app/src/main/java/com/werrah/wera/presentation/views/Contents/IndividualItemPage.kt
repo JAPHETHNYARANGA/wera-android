@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,15 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.werrah.wera.R
+import com.werrah.wera.presentation.viewModel.FavoritesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.werrah.wera.presentation.viewModel.MessagesViewModel
+import com.werrah.wera.presentation.viewModel.RemoveFromFavoritesViewModel
 
 
 @Composable
 fun IndividualItemPage(
     navController: NavController,
     getIndividualItemViewModel: GetIndividualItemViewModel,
-    messagesViewModel: MessagesViewModel
+    messagesViewModel: MessagesViewModel,
+    favoritesViewModel : FavoritesViewModel,
+    removeFromFavoritesViewModel :RemoveFromFavoritesViewModel
 
 ){
     val context = LocalContext.current
@@ -48,6 +54,7 @@ fun IndividualItemPage(
     val chatIdState = messagesViewModel.chatIdVal.collectAsState()
     val chatId = chatIdState.value
     val imageUrl by getIndividualItemViewModel.imageUrl.collectAsState()
+
 
 
     if (itemData != null && itemData.success == true) {
@@ -90,11 +97,26 @@ fun IndividualItemPage(
                         //TODO
                     }) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.favoritesliked),
-                                contentDescription = "contact Icon",
-                                modifier = Modifier.size(20.dp)
-                            )
+                            if (itemData.favorite == true){
+                                Icon(
+                                    painter = painterResource(id = R.drawable.favoritesliked),
+                                    contentDescription = "contact Icon",
+                                    modifier = Modifier.size(20.dp)
+                                        .clickable { removeFromFavoritesViewModel.removeFromFavorites(
+                                            itemData.listing?.id
+                                        ) }
+                                )
+                            }else{
+                                Icon(
+                                    painter = painterResource(id = R.drawable.favorites),
+                                    contentDescription = "contact Icon",
+                                    modifier = Modifier.size(20.dp)
+                                        .clickable { favoritesViewModel.addToFavorites(
+                                            itemData.listing?.id
+                                        ) }
+                                )
+                            }
+
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(text = "Favorite")
                         }
@@ -198,6 +220,13 @@ fun IndividualItemPage(
     } else {
         // If itemData is null or does not contain the listing data, you can display a message
         Text(text = "Item data not available")
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            // Call the clearData function to clear data when the composable is disposed
+            getIndividualItemViewModel.clearData()
+        }
     }
 }
 

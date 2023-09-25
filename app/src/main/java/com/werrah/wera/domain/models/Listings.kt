@@ -17,7 +17,8 @@ data class Listings(
     val status: Int?,
     val image : String?,
     val request_count : Int?,
-    val user : UserData
+    val user : UserData,
+
 )
 
 data class UserData(

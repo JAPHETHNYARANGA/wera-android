@@ -3,6 +3,7 @@ package com.werrah.wera.data.network
 import com.werrah.wera.domain.models.Categories
 import com.werrah.wera.domain.models.ChatId
 import com.werrah.wera.domain.models.DeleteListingResponse
+import com.werrah.wera.domain.models.FavoritesResponse
 import com.werrah.wera.domain.models.ForgotPassword
 import com.werrah.wera.domain.models.ForgotPasswordResponse
 import com.werrah.wera.domain.models.GetUserData
@@ -70,6 +71,16 @@ interface GetIndividualListing{
     suspend fun getIndividualListings(@Path("id") id: Int): IndividualListing
 }
 
+interface AddToFavorites{
+    @POST("listing/{id}/add-to-favorites")
+    suspend fun favorites(@Path("id") id: Int?) : FavoritesResponse
+}
+
+interface RemoveFromFavorites{
+    @POST("listing/{id}/add-to-favorites")
+    suspend fun favorites(@Path("id") id: Int?) : FavoritesResponse
+}
+
 interface DeleteListing{
     @GET("deletelisting/{id}")
     suspend fun deleteListing(@Path("id") id : Int) : DeleteListingResponse
@@ -125,3 +136,6 @@ interface GetReceiverIdInterface{
     @GET("receiverId")
     suspend fun getReceiverId(@Query("userId") userId: String, @Query("chatId") chatId : String) : ReceiverIdResponse
 }
+
+
+

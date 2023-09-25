@@ -33,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.werrah.wera.presentation.viewModel.DeleteAccountViewModel
 import com.werrah.wera.presentation.viewModel.DeleteListingViewModel
+import com.werrah.wera.presentation.viewModel.FavoritesViewModel
 import com.werrah.wera.presentation.viewModel.GetCategoriesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.werrah.wera.presentation.viewModel.GetListingsViewModel
@@ -41,6 +42,7 @@ import com.werrah.wera.presentation.viewModel.GetUserViewModel
 import com.werrah.wera.presentation.viewModel.LogoutViewModel
 import com.werrah.wera.presentation.viewModel.MessagesViewModel
 import com.werrah.wera.presentation.viewModel.PostItemViewModel
+import com.werrah.wera.presentation.viewModel.RemoveFromFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.UpdateProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +58,9 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                getCategoriesViewModel : GetCategoriesViewModel,
                logoutViewModel :LogoutViewModel,
                deleteAccountViewModel: DeleteAccountViewModel,
-               messagesViewModel :MessagesViewModel
+               messagesViewModel :MessagesViewModel,
+               favoritesViewModel :FavoritesViewModel,
+               removeFromFavoritesViewModel :RemoveFromFavoritesViewModel
 ){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -85,7 +89,9 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                 getCategoriesViewModel = getCategoriesViewModel,
                 logoutViewModel = logoutViewModel,
                 deleteAccountViewModel = deleteAccountViewModel,
-                messagesViewModel = messagesViewModel
+                messagesViewModel = messagesViewModel,
+                favoritesViewModel =favoritesViewModel,
+                removeFromFavoritesViewModel = removeFromFavoritesViewModel
             )
 
         }

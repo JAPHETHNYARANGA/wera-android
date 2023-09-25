@@ -85,6 +85,7 @@ fun FavoritesScreen(
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
+    var sublocation by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var category by remember { mutableStateOf(0) }
     val context = LocalContext.current
@@ -100,7 +101,9 @@ fun FavoritesScreen(
     }
 
     var isExpandedStatus1 by remember { mutableStateOf(false) }
+    var isExpandedSubLocation by remember { mutableStateOf(false) }
     var selectedCity by remember { mutableStateOf<String?>(null) }
+    var selectedSubCity by remember { mutableStateOf<String?>(null) }
 
     var selectedCategory by remember { mutableStateOf<CategoriesData?>(null) }
     // Observe the categories data from the view model
@@ -176,53 +179,6 @@ fun FavoritesScreen(
             }
 
 
-//            Text(
-//                text = "Status", // Add the label text here
-//                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
-//            )
-//
-//            Box(modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp)) {
-//                // Align the ExposedDropdownMenuBox to center
-//                ExposedDropdownMenuBox(
-//                    expanded = isExpandedStatus,
-//                    onExpandedChange = { isExpandedStatus = it },
-//                    modifier = Modifier.align(Alignment.Center)
-//                ) {
-//                    OutlinedTextField(
-//                        value = TextFieldValue(statusToString(status)),
-//                        onValueChange = {},
-//                        readOnly = true,
-//                        trailingIcon = {
-//                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStatus)
-//                        },
-//                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
-//                        modifier = Modifier.menuAnchor()
-//                    )
-//
-//                    ExposedDropdownMenu(
-//                        expanded = isExpandedStatus,
-//                        onDismissRequest = { isExpandedStatus = false }
-//                    ) {
-//                        DropdownMenuItem(
-//                            text = { Text("Post Listing") },
-//                            onClick = {
-//                                status = 1
-//                                isExpandedStatus = false
-//                            }
-//                        )
-//                        DropdownMenuItem(
-//                            text = { Text("Post my Skill") },
-//                            onClick = {
-//                                status = 2
-//                                isExpandedStatus = false
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -293,6 +249,68 @@ fun FavoritesScreen(
                                     isExpandedStatus1 = false
                                 },
                             )
+                        }
+                    }
+                }
+            }
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+                // Align the ExposedDropdownMenuBox to center
+                ExposedDropdownMenuBox(
+                    expanded = isExpandedSubLocation,
+                    onExpandedChange = { isExpandedSubLocation = it },
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    OutlinedTextField(
+                        value = TextFieldValue(text = selectedSubCity ?: "Select sub city"),
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedSubLocation)
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isExpandedSubLocation,
+                        onDismissRequest = { isExpandedSubLocation = false }
+                    ) {
+                        when (selectedCity) {
+                            "Nairobi" -> {
+                                val Nairobi = listOf(
+                                    "Langata", "Kajiado"
+                                )
+                                Nairobi.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Kisumu" -> {
+                                val Kisumu = listOf("Kondele", "Milimani")
+                                Kisumu.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            else -> {
+                                // Handle the case when no city is selected
+                                Text("Select a city first")
+                            }
                         }
                     }
                 }
