@@ -297,6 +297,40 @@ fun FavoritesScreen(
                                     )
                                 }
                             }
+                            "Kiambu" -> {
+                                val Kiambu = listOf(
+                                    "All Kiambu", "Juja","Kiambu/Kiambu","Kikuyu","Ruiru","Thika","Banana","Gachie",
+                                    "Gatundu North","Gatundu South","Gitaru","Githunguri","Kabete","Kiambaa","Lari","Limuru",
+                                    "Nachu","Ndereru","Nyadhuna","Rosslyn","Ruaka","Tuiritu","Witeithie"
+                                )
+                                Kiambu.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Mombasa" -> {
+                                val Mombasa = listOf(
+                                    "All Mombasa", "Kisauni","Mombasa CBD","Mvita","Nyali","Tudor","Bamburi","Chaani",
+                                    "Changamwe","Ganjoni","Industrial Area(Msa)","Jomvu","Kikowani","Kizingo","Likoni","Makadara(Msa)",
+                                    "Mbaraki","Old Town","Shanzu","Shimanzi","Tononoka"
+                                )
+                                Mombasa.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
                             "Nairobi" -> {
                                 val Nairobi = listOf(
                                     "Langata", "Kajiado"
