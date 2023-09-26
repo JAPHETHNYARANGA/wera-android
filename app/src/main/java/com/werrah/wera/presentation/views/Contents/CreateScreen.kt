@@ -333,7 +333,11 @@ fun FavoritesScreen(
                             }
                             "Nairobi" -> {
                                 val Nairobi = listOf(
-                                    "Langata", "Kajiado"
+                                    "Embakasi","Karen","Kilimani","Nairobi Central","Ngara","Airbase","Baba Dogo","Califonia","Chokaa","Clay City","Dagoretti","Dandora","Donholm","Eastleigh","Gikomba/Kamukunji"
+                                    ,"Githurai","Huruma","Imara Daima","Industrial Area Nairobi","Jamhuri","Kabiro","Kahawa West","Kamulu","Kangemi","Kariobangi","Kasarani","Kawangware","Kayole","Kiamaiko"
+                                    ,"Kibra","Kileleshwa","Kitisuru","Komarock","Landimawe","Langata","Lavington","Lucky Summer","Makadara","Makongeni","Maringo/Hamza","Mathare Hospital","Mathare North","Mbagathi Way"
+                                    ,"Mlango Kubwa","Mombasa Road","Mountain View","Mowlem","Muthaiga","Mwiki","Nairobi South","Nairobi West","Njiru","Pangani","Parklands/Highridge","Pumwani","Ridgeways","Roysambu","Ruai"
+                                    ,"Ruaraka","Runda","Saika","South B","South C","Thome","Umoja","Upperhill","Utalii","Utawala","Westlands", "Woodley/ Kenyatta Golf Course","Zimmerman","Ziwani/Kariokor"
                                 )
                                 Nairobi.forEach { city ->
                                     DropdownMenuItem(
@@ -347,8 +351,22 @@ fun FavoritesScreen(
                                 }
                             }
                             "Kisumu" -> {
-                                val Kisumu = listOf("Kondele", "Milimani")
+                                val Kisumu = listOf("All Kisumu", "Kisumu Central", "Kisumu West"," Chemelil","Kaloleni","Kisumu East","Kolwa Central","Kolwa East", "Muhoroni","North West Kisumu","Nyakach",
+                                    "Nyando","Seme","South West Kisumu")
                                 Kisumu.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Nakuru" -> {
+                                val Nakuru = listOf("All Nakuru", )
+                                Nakuru.forEach { city ->
                                     DropdownMenuItem(
                                         text = { Text(city) },
                                         onClick = {
@@ -363,6 +381,7 @@ fun FavoritesScreen(
                                 // Handle the case when no city is selected
                                 Text("Select a city first")
                             }
+
                         }
                     }
                 }
