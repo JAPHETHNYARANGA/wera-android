@@ -279,6 +279,24 @@ fun FavoritesScreen(
                         onDismissRequest = { isExpandedSubLocation = false }
                     ) {
                         when (selectedCity) {
+                            "Kajiado" -> {
+                                val Kajiado = listOf(
+                                    "All Kajiado", "Kitengela","Ngong","Ongata Rongai","Bisil","Dalalekutuk","Emurua Dikir","Entonet/Lenkisim",
+                                    "Eselenkei","Ewuaso Onnkidong'l","Ildamat","Iloodokilani/Amboseli","Imaroro","Isinya","Kajiado CBD","Kenyawa-Poka",
+                                    "Kimana","Kisaju","Kiserian","Kuku","Kumpa","Loitoktok","Magadi","Mata","Matapato","Mbirikani","Mosiro","Namanga","Olkeri",
+                                    "Oloika","Oloolua","Oloosirkon/Sholinke","Purko","Rombo",
+                                )
+                                Kajiado.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
                             "Nairobi" -> {
                                 val Nairobi = listOf(
                                     "Langata", "Kajiado"
