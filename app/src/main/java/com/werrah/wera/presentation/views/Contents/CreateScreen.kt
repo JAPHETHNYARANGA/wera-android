@@ -365,8 +365,36 @@ fun FavoritesScreen(
                                 }
                             }
                             "Nakuru" -> {
-                                val Nakuru = listOf("All Nakuru", )
+                                val Nakuru = listOf("All Nakuru","Nakuru Town East","Naivasha","Bahati","Gilgil","Hells Gate","Kuresoi North","Kuresoi South","Lanet","London","Maiella","Malewa West","Mbaruk/Eburu","Molo","Nakuru Town West",
+                                "Njoro","Olkaria", "Rongai","Salgaa","Subukia")
                                 Nakuru.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Baringo" -> {
+                                val Baringo = listOf("All Baringo","Kabarnet","Marigat","Ravine","Bartabwa","Barwessa","Churo/Amanya","Emining","Ewalel Chapchap","Kapropita","Kisanana","Koibatek","Lembus","Lembus Kwen","Lembus /Perkerra",
+                                "Mogotio","Mukutani","Nginyang East","Nginyang West","Sacho", "Silale","Tenges")
+                                Baringo.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Bomet" -> {
+                                val Bomet = listOf("All Bomet",)
+                                Bomet.forEach { city ->
                                     DropdownMenuItem(
                                         text = { Text(city) },
                                         onClick = {
