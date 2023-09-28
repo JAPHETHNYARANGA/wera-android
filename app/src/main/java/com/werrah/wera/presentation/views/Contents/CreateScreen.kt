@@ -235,8 +235,8 @@ fun FavoritesScreen(
                         onDismissRequest = { isExpandedStatus1 = false }
                     ) {
                         val cities = listOf(
-                            "Kajiado", "Kiambu", "Mombasa", "Nairobi", "Nakuru", "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu",
-                            "Garisa", "Homa Bay", "Isiolo", "Kakamega", "Kericho", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru",
+                            "Kajiado", "Kiambu", "Mombasa", "Nairobi", "Nakuru", "Baringo", "Bomet", "Bungoma", "Busia", "ElgeyoMarakwet", "Embu",
+                            "Garisa", "HomaBay", "Isiolo", "Kakamega", "Kericho", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru",
                             "Migori", "Muranga", "Nandi", "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita Taveta", "Tana River", "Tharaka-Nithi", "Trans-Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
                         )
 
@@ -393,8 +393,89 @@ fun FavoritesScreen(
                                 }
                             }
                             "Bomet" -> {
-                                val Bomet = listOf("All Bomet",)
+                                val Bomet = listOf("All Bomet","Chemagei","Longisa","Silibwet TownShip","Boito","Chebunyo","Embomos","Kapletundo","Kembu","Kimulot","Kipsonoi","Merigi","Magogosiek","Mutarakwa","Ndanai/ Abosi",
+                                "Ndaraweta","Nyongores","Sigor","Singorwet","Siongiroi")
                                 Bomet.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Bungoma" -> {
+                                val Bungoma = listOf("All Bungoma","Kabuchai/Chwele","Khalaba/Kanduyi","Marakaru/Tuuti","Township D","Bokoli","Bukembe East","Bukembe West","Bumula","Bwake/Luuya","Cheptais","Chepyuk","East Sang'Alo","Elgon","Kabula","Kamukuywa","Kibingei","Kimaeti"
+                                ,"Kimilili","Maeni","Malakisi/South Kulisiru","Maraka","Matulo","Mihuu","Misikhu","Mukisoma","Namwela", "Ndalu/Tabani","Siboti","Sitikho","South Bukusu","Soysambu/ Mitua","Tongeren","Webuye","West Bukusu","West Nalondo","West Sang'Alo")
+                                Bungoma.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Busia" -> {
+                                val Busia = listOf("All Busia","Angeng'A Nanbuga","Bunyala West/Budalangi","Burumba","Amukura Central","Amukura East","Amukura West","Ang'Orom","Bukhayo Central","Bukhayo East","Bukhayo West","Bukhayo North","Busiwabo","Bwiri","Elugulu","Kingandole","Malaba Central","Malaba North","Marachi Central","Marachi East","Marachi West","Matayos South",
+                                "Manyenje","Nambale Township","Nangina")
+                                Busia.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "ElgeyoMarakwet" -> {
+                                val ElgeyoMarakwet = listOf("All Elgeyo-Marakwet","Arror","Chepkorio","Emsoo","Endo","Kamariny","Kapchemutwa","Kaptarakwa","Metkei","Moiben/Kuserwo","Sengwer","Soy North","Tambach")
+                                ElgeyoMarakwet.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Embu" -> {
+                                val Embu = listOf("All Embu","Central Ward","Kirimari","Mwea","Evurore","Gaturi North","Gaturi South","Kagaari North","Kagaari South","Kiambere","Kithimu","Kyeni North","Kyeni South","Makima","Mavuria","Mbeti North","Mbeti South","Muminji","Nginda","Nthawa","Ruguru/Ngandori")
+                                Embu.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Garissa" -> {
+                                val Garissa = listOf("All Garissa","Dadaab","Iftin","Abakaile","Bura","Demajale","Galbet","Goreale","Ijara","Jara Jara","Labasigale","Liboi","Masalani","Sankuri","Waberi")
+                                Garissa.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "HomaBay" -> {
+                                val HomaBay = listOf("All HomaBay","Homa Bay Central","Mfangano Island","Cenral Karachuonyo","Central Kasipul",)
+                                HomaBay.forEach { city ->
                                     DropdownMenuItem(
                                         text = { Text(city) },
                                         onClick = {
