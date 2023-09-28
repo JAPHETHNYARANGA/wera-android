@@ -474,8 +474,35 @@ fun FavoritesScreen(
                                 }
                             }
                             "HomaBay" -> {
-                                val HomaBay = listOf("All HomaBay","Homa Bay Central","Mfangano Island","Cenral Karachuonyo","Central Kasipul",)
+                                val HomaBay = listOf("All HomaBay","Homa Bay Central","Mfangano Island","Cenral Karachuonyo","Central Kasipul","East Gem(Rangwe)","East Kamagak","Gembe","Homa Bay Arujo","Homa Bay East","Homa Bay West","Kabondo East","Kagan","Kaksingri West","Kanyadoto","Kanyaluo",
+                                "Kanyamwa Kosewe","Kanyikela","Kasgunga","Kendu Bay Town","Kochia","Kwabwai","Lambwe","North Karachuonyo","Rusinga Island","South Kasipul","West Kasipul")
                                 HomaBay.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Isiolo" -> {
+                                val Isiolo = listOf("All Isiolo","Bulla Pesa","Burat","Garba Tulla","Isiolo North","Kinna","Oldonyiro","Wabera")
+                                Isiolo.forEach { city ->
+                                    DropdownMenuItem(
+                                        text = { Text(city) },
+                                        onClick = {
+                                            selectedSubCity = city // Store the selected city as text
+                                            sublocation = city
+                                            isExpandedSubLocation = false
+                                        },
+                                    )
+                                }
+                            }
+                            "Kakamega" -> {
+                                val Kakamega = listOf("All Kakamega",)
+                                Kakamega.forEach { city ->
                                     DropdownMenuItem(
                                         text = { Text(city) },
                                         onClick = {
