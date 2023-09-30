@@ -57,6 +57,7 @@ import androidx.navigation.NavController
 import com.werrah.wera.MainActivity
 import com.werrah.wera.R
 import com.werrah.wera.presentation.viewModel.ForgetPasswordViewModel
+import com.werrah.wera.presentation.viewModel.GetListingsViewModel
 import com.werrah.wera.presentation.viewModel.LoginUserViewModel
 import com.werrah.wera.presentation.views.shared.LoadingSpinner
 import kotlinx.coroutines.CoroutineScope
@@ -68,6 +69,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     loginUserViewModel: LoginUserViewModel,
     forgetPasswordViewModel: ForgetPasswordViewModel,
+    getListingsViewModel: GetListingsViewModel,
     navController: NavController
 ) {
     var email by remember { mutableStateOf("") }
@@ -199,8 +201,10 @@ fun LoginScreen(
                                             userId.commit()
 
                                             // Close the application and restart it
-                                            (context as? MainActivity)?.restartApplication()
+                                           // (context as? MainActivity)?.restartApplication()
+                                            getListingsViewModel.fetchListings()
 
+                                            navController.navigate("home")
 
                                         } else {
                                             Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()

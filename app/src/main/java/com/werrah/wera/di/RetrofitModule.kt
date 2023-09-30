@@ -89,8 +89,8 @@ object RetrofitModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(sharedPreferences: SharedPreferences): OkHttpClient {
-        val token = sharedPreferences.getString("loginPreference", "") ?: ""
         val interceptor = Interceptor { chain ->
+            val token = sharedPreferences.getString("loginPreference", "") ?: ""
             val request: Request = chain.request().newBuilder()
                 .header("Authorization", "Bearer $token")
                 .build()
@@ -105,7 +105,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://fef9-197-232-87-139.ngrok-free.app/api/")
+            .baseUrl("https://0b5a-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
