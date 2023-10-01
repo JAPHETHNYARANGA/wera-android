@@ -4,9 +4,12 @@ package com.werrah.wera.presentation.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.werrah.wera.domain.models.Favorites
+import com.werrah.wera.domain.models.FavoritesList
 import com.werrah.wera.domain.models.FavoritesResponse
-import com.werrah.wera.domain.models.IndividualListing
+import com.werrah.wera.domain.models.Listings
 import com.werrah.wera.domain.useCase.AddToFavoritesUseCase
+import com.werrah.wera.domain.useCase.GetFavoritesUseCase
 import com.werrah.wera.domain.useCase.RemoveFromFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +28,7 @@ class FavoritesViewModel @Inject constructor(private val addToFavoritesUseCase: 
     fun addToFavorites(id:Int?){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val addToFavorites = addToFavoritesUseCase.addToFavorites(id)
+                 addToFavoritesUseCase.addToFavorites(id)
 
 
 
@@ -47,7 +50,7 @@ class RemoveFromFavoritesViewModel @Inject constructor(private val removeFromFav
     fun removeFromFavorites(id:Int?){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val removeFromFavorites = removeFromFavoritesUseCase.removeFromFavorites(id)
+               removeFromFavoritesUseCase.removeFromFavorites(id)
 
 
             } catch (e: Exception) {
@@ -55,8 +58,43 @@ class RemoveFromFavoritesViewModel @Inject constructor(private val removeFromFav
             }
         }
     }
-
-
 }
 
+@HiltViewModel
+class FetchFavoritesViewModel @Inject constructor(private val getFavoritesUseCase: GetFavoritesUseCase): ViewModel() {
 
+    private val _favorites = MutableStateFlow(emptyList<FavoritesList>())
+    val favoritesDisplay: MutableStateFlow<List<FavoritesList>> get() = _favorites
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> get() = _isRefreshing
+
+
+    init {
+        fetchFavorites()
+    }
+
+    fun fetchFavorites(){
+        if (!_isRefreshing.value) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    _isRefreshing.value = true
+                    val favoritesData = getFavoritesUseCase.getFavorites()
+                    val favorites = favoritesData.listings
+                    _favorites.value = favorites
+                    Log.d("Favorites", "$favoritesData")
+
+                } catch (e: Exception) {
+                    Log.d("Failure fetching favorites", "${e.message}")
+                } finally {
+                    _isRefreshing.value = false
+                }
+
+            }
+        }
+    }
+
+    fun refreshListings() {
+        fetchFavorites()
+    }
+
+}

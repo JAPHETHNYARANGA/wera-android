@@ -62,6 +62,7 @@ import com.werrah.wera.presentation.viewModel.GetUserViewModel
 import com.werrah.wera.presentation.viewModel.LogoutViewModel
 import com.google.firebase.storage.FirebaseStorage
 import com.werrah.wera.R
+import com.werrah.wera.presentation.viewModel.FetchFavoritesViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfilePage(navController: NavController, sharedPreferences: SharedPreferences, getUserViewModel: GetUserViewModel, getUserListingsViewModel: GetUserListingsViewModel,
-deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListingsViewModel, logoutViewModel : LogoutViewModel, deleteAccountViewModel: DeleteAccountViewModel) {
+                deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListingsViewModel, logoutViewModel : LogoutViewModel, deleteAccountViewModel: DeleteAccountViewModel, fetchFavoritesViewModel: FetchFavoritesViewModel,) {
 
     val context = LocalContext.current
     val userDataState = getUserViewModel.userDisplay.collectAsState()
@@ -135,9 +136,45 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
             Text(text = it)
         }
 
+        Spacer(modifier = Modifier.height(25.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+            ) {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        navController.navigate(BottomBarScreen.Edit.route)
+                    }
+                ) {
+                    Text(text = "Edit")
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
+            ) {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        fetchFavoritesViewModel.fetchFavorites()
+                        navController.navigate(BottomBarScreen.Favorites.route)
+                    }
+                ) {
+                    Text(text = "Favorites")
+                }
+            }
+        }
 
 
-        Spacer(modifier = Modifier.height(65.dp))
+
+        Spacer(modifier = Modifier.height(45.dp))
 
         //horizontally scrolling columns
         LazyRow(
@@ -281,13 +318,6 @@ deleteListingViewModel: DeleteListingViewModel, getListingsViewModel:GetListings
         Spacer(modifier = Modifier.height(65.dp))
 
         Column() {
-            Button(modifier = Modifier.fillMaxWidth(), onClick = {
-
-                navController.navigate(BottomBarScreen.Edit.route)
-            }) {
-                Text(text = "Edit")
-
-            }
 
             Spacer(modifier = Modifier.height(10.dp))
 

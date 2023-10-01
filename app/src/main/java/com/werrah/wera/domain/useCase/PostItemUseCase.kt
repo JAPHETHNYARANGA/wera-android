@@ -11,13 +11,14 @@ class PostItemUseCase @Inject constructor(private val postItemRepository: PostIt
         name : String,
         description : String,
         location : String,
+        sublocation : String,
         amount : String,
         category : Int,
         status : Int,
         image: String
     ) : PostItemResponse{
         try {
-            return postItemRepository.postItem(name, description, location, amount, category, status, image)
+            return postItemRepository.postItem(name, description, location,sublocation, amount, category, status, image)
         }catch (e: Exception){
             Log.d("post item useCase Error", "${e.message}")
             throw e

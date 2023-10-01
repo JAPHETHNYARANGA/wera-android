@@ -25,6 +25,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -74,7 +75,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun FavoritesScreen(
+fun CreateScreen(
     postItemViewModel: PostItemViewModel,
     navController: NavController,
     getListingsViewModel: GetListingsViewModel,
@@ -1029,9 +1030,13 @@ fun FavoritesScreen(
                                     Toast.makeText(context, "Description cannot be empty", Toast.LENGTH_LONG).show()
                                 }else if (location.isEmpty()){
                                     Toast.makeText(context, "Location cannot be empty", Toast.LENGTH_LONG).show()
-                                }else if (amount.isEmpty()){
+                                }else if(sublocation.isEmpty()){
+                                    Toast.makeText(context, "Sub Location cannot be empty", Toast.LENGTH_LONG).show()
+                                }
+                                else if (amount.isEmpty()){
                                     Toast.makeText(context, "Amount cannot be empty", Toast.LENGTH_LONG).show()
                                 }
+
 
                                 // Check if the Bitmap is not null
                                 if (selectedFile != null) {
@@ -1090,6 +1095,7 @@ fun FavoritesScreen(
                                                                 name,
                                                                 description,
                                                                 location,
+                                                                sublocation,
                                                                 amount,
                                                                 selectedCategory?.id ?: 0,
                                                                 1,
@@ -1159,6 +1165,7 @@ fun FavoritesScreen(
                 if (isPosting) {
                     // Show loading spinner if posting is in progress
                     LoadingSpinner(isLoading = true)
+
                 } else {
                     // Show "Create" text when not posting
                     Text(text = "Create")

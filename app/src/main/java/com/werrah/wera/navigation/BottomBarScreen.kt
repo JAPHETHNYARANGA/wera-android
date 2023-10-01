@@ -16,6 +16,13 @@ sealed class BottomBarScreen(
         icon_focused = R.drawable.home
     )
 
+    object Favorites: BottomBarScreen(
+        route = "favorites",
+        title = "Favorites",
+        icon = R.drawable.favoritesliked,
+        icon_focused = R.drawable.favoritesliked
+    )
+
         object CreateListing: BottomBarScreen(
         route = "favorite",
         title = "Favorite",
@@ -72,10 +79,10 @@ sealed class BottomBarScreen(
         icon_focused = R.drawable.location
     )
 
-    object Favorites : BottomBarScreen(
-        route ="map",
-        title = "map",
-        icon = R.drawable.favoritesliked,
-        icon_focused = R.drawable.favoritesliked
-    )
+//    object Favorites : BottomBarScreen(
+//        route ="map",
+//        title = "map",
+//        icon = R.drawable.favoritesliked,
+//        icon_focused = R.drawable.favoritesliked
+//    )
 }

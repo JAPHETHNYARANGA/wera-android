@@ -20,6 +20,7 @@ import com.werrah.wera.navigation.MainScreen
 import com.werrah.wera.presentation.viewModel.DeleteAccountViewModel
 import com.werrah.wera.presentation.viewModel.DeleteListingViewModel
 import com.werrah.wera.presentation.viewModel.FavoritesViewModel
+import com.werrah.wera.presentation.viewModel.FetchFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.ForgetPasswordViewModel
 import com.werrah.wera.presentation.viewModel.GetCategoriesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
     private val forgetPasswordViewModel : ForgetPasswordViewModel by viewModels()
     private val favoritesViewModel : FavoritesViewModel by viewModels()
     private val removeFromFavoritesViewModel : RemoveFromFavoritesViewModel by viewModels()
+    private val fetchFavoritesViewModel : FetchFavoritesViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +83,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = if (loginToken != null) "home" else "login") {
                         composable("home") {
                             MainScreen(postItemViewModel, sharedPreferences,  getListingsViewModel, updateProfileViewModel, getUserViewModel, getUserListingsViewModel, getIndividualItemViewModel
-                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel, favoritesViewModel, removeFromFavoritesViewModel)
+                            , deleteListingViewModel, getCategoriesViewModel , logoutViewModel, deleteAccountViewModel, messagesViewModel, favoritesViewModel, removeFromFavoritesViewModel, fetchFavoritesViewModel)
                         }
 
                         composable("edit") {

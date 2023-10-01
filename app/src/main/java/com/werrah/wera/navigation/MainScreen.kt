@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.werrah.wera.presentation.viewModel.DeleteAccountViewModel
 import com.werrah.wera.presentation.viewModel.DeleteListingViewModel
 import com.werrah.wera.presentation.viewModel.FavoritesViewModel
+import com.werrah.wera.presentation.viewModel.FetchFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.GetCategoriesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.werrah.wera.presentation.viewModel.GetListingsViewModel
@@ -60,7 +61,9 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                deleteAccountViewModel: DeleteAccountViewModel,
                messagesViewModel :MessagesViewModel,
                favoritesViewModel :FavoritesViewModel,
-               removeFromFavoritesViewModel :RemoveFromFavoritesViewModel
+               removeFromFavoritesViewModel :RemoveFromFavoritesViewModel,
+               fetchFavoritesViewModel : FetchFavoritesViewModel
+
 ){
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -91,7 +94,8 @@ fun MainScreen(postItemViewModel : PostItemViewModel,
                 deleteAccountViewModel = deleteAccountViewModel,
                 messagesViewModel = messagesViewModel,
                 favoritesViewModel =favoritesViewModel,
-                removeFromFavoritesViewModel = removeFromFavoritesViewModel
+                removeFromFavoritesViewModel = removeFromFavoritesViewModel,
+                fetchFavoritesViewModel = fetchFavoritesViewModel
             )
 
         }

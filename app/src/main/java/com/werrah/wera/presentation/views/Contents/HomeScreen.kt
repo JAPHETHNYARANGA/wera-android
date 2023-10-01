@@ -158,7 +158,15 @@ fun HomeScreen(navController: NavController,
                                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 )
                                 process.amount?.let { Text(text = it) }
+
                                 // Add other content for the card here
+
+                                Text(
+                                    text = "Location",
+                                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                )
+                                process.Location?.let { Text(text = it) }
+                                process.sublocation?.let { Text(text = it) }
                             }
                         }
 

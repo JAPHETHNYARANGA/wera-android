@@ -4,6 +4,7 @@ data class PostItemData(
     val name: String,
     val description : String,
     val location : String,
+    val sublocation : String,
     val amount : String,
     val category : Int,
     val status : Int,

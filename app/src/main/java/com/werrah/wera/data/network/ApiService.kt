@@ -3,6 +3,7 @@ package com.werrah.wera.data.network
 import com.werrah.wera.domain.models.Categories
 import com.werrah.wera.domain.models.ChatId
 import com.werrah.wera.domain.models.DeleteListingResponse
+import com.werrah.wera.domain.models.Favorites
 import com.werrah.wera.domain.models.FavoritesResponse
 import com.werrah.wera.domain.models.ForgotPassword
 import com.werrah.wera.domain.models.ForgotPasswordResponse
@@ -65,6 +66,10 @@ interface GetPosts{
     @GET("listing")
     suspend fun getListings() : ListingsData
 }
+interface GetFavorites{
+    @GET("getFavorites")
+    suspend fun getFavorites() : Favorites
+}
 
 interface GetIndividualListing{
     @GET("individuallisting/{id}")
@@ -77,7 +82,7 @@ interface AddToFavorites{
 }
 
 interface RemoveFromFavorites{
-    @POST("listing/{id}/add-to-favorites")
+    @POST("listing/{id}/remove-from-favorites")
     suspend fun favorites(@Path("id") id: Int?) : FavoritesResponse
 }
 

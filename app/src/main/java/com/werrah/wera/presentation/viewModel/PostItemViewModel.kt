@@ -29,6 +29,7 @@ class PostItemViewModel @Inject constructor(private val postItemUseCase: PostIte
         name: String,
         description : String,
         location : String,
+        sublocation : String,
         amount : String,
         category : Int,
         status : Int,
@@ -36,7 +37,7 @@ class PostItemViewModel @Inject constructor(private val postItemUseCase: PostIte
 
     ) : PostItemResponse{
         try {
-            return postItemUseCase.postItemUseCase(name, description, location, amount, category, status, image)
+            return postItemUseCase.postItemUseCase(name, description, location,sublocation, amount, category, status, image)
 
         }catch (e: SocketTimeoutException) {
             Log.d("exception", "Timeout Exception")
@@ -44,9 +45,3 @@ class PostItemViewModel @Inject constructor(private val postItemUseCase: PostIte
         }
     }
 }
-
-
-
-
-
-

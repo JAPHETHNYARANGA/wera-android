@@ -9,6 +9,7 @@ import com.werrah.wera.data.network.FetchProfile
 import com.werrah.wera.data.network.ForgetPasswordInterface
 import com.werrah.wera.data.network.GetCategories
 import com.werrah.wera.data.network.GetChatIdInterface
+import com.werrah.wera.data.network.GetFavorites
 import com.werrah.wera.data.network.GetIndividualListing
 import com.werrah.wera.data.network.GetMessages
 import com.werrah.wera.data.network.GetPosts
@@ -30,6 +31,7 @@ import com.werrah.wera.domain.repository.FetchProfileRepository
 import com.werrah.wera.domain.repository.ForgetPasswordRepository
 import com.werrah.wera.domain.repository.GetCategoriesDataRepository
 import com.werrah.wera.domain.repository.GetChatIdRepository
+import com.werrah.wera.domain.repository.GetFavoritesRepository
 import com.werrah.wera.domain.repository.GetIndividualItemRepository
 import com.werrah.wera.domain.repository.GetListingsRepository
 import com.werrah.wera.domain.repository.GetMessagesRepository
@@ -49,6 +51,7 @@ import com.werrah.wera.domain.useCase.DeleteListingUseCase
 import com.werrah.wera.domain.useCase.FetchProfileUseCase
 import com.werrah.wera.domain.useCase.ForgetPasswordUseCase
 import com.werrah.wera.domain.useCase.GetCategoriesDataUseCase
+import com.werrah.wera.domain.useCase.GetFavoritesUseCase
 import com.werrah.wera.domain.useCase.GetIndividualItemUseCase
 import com.werrah.wera.domain.useCase.GetListingUseCase
 import com.werrah.wera.domain.useCase.GetMessagesUseCase
@@ -148,6 +151,11 @@ object RetrofitModule {
     }
 
     @Provides
+    fun provideGetFavoriteData(retrofit: Retrofit) : GetFavorites{
+        return retrofit.create(GetFavorites::class.java)
+    }
+
+    @Provides
     fun provideGetIndividualListings(retrofit: Retrofit) : GetUserListings{
         return retrofit.create(GetUserListings::class.java)
     }
@@ -244,6 +252,11 @@ object RetrofitModule {
     @Provides
     fun providePostsRepository(getPosts: GetPosts) : GetListingsRepository{
         return GetListingsRepository(getPosts)
+    }
+
+    @Provides
+    fun provideFavoriteListRepository(getFavorites: GetFavorites): GetFavoritesRepository{
+        return GetFavoritesRepository(getFavorites)
     }
 
     @Provides
@@ -348,6 +361,11 @@ object RetrofitModule {
     @Provides
     fun provideGetListingUseCase(getListingsRepository: GetListingsRepository) : GetListingUseCase{
         return GetListingUseCase(getListingsRepository)
+    }
+
+    @Provides
+    fun providesGetFavoritesUseCase(getFavoritesRepository: GetFavoritesRepository) : GetFavoritesUseCase{
+        return GetFavoritesUseCase(getFavoritesRepository)
     }
 
     @Provides

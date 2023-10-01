@@ -7,7 +7,7 @@ data class FavoritesResponse(
 data class Favorites(
     val success: Boolean?,
     val message: String?,
-    val favorites : List<FavoritesList>
+    val listings: List<FavoritesList>
 )
 
 data class FavoritesList(
@@ -16,7 +16,7 @@ data class FavoritesList(
     val listing_id:Int?,
     val created_at: String?,
     val updated_at : String?,
-    val listing : List<FavoriteListings>
+    val listing : FavoriteListings?
 )
 
 data class FavoriteListings(
@@ -25,6 +25,7 @@ data class FavoriteListings(
     val name : String?,
     val description : String?,
     val Location : String?,
+    val sublocation : String?,
     val category_id: Int?,
     val amount : String?,
     val status : Int?,

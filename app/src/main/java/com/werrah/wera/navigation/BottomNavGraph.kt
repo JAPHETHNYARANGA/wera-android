@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.werrah.wera.presentation.viewModel.DeleteAccountViewModel
 import com.werrah.wera.presentation.viewModel.DeleteListingViewModel
 import com.werrah.wera.presentation.viewModel.FavoritesViewModel
+import com.werrah.wera.presentation.viewModel.FetchFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.GetCategoriesViewModel
 import com.werrah.wera.presentation.viewModel.GetIndividualItemViewModel
 import com.werrah.wera.presentation.viewModel.GetListingsViewModel
@@ -18,7 +19,7 @@ import com.werrah.wera.presentation.viewModel.MessagesViewModel
 import com.werrah.wera.presentation.viewModel.PostItemViewModel
 import com.werrah.wera.presentation.viewModel.RemoveFromFavoritesViewModel
 import com.werrah.wera.presentation.viewModel.UpdateProfileViewModel
-import com.werrah.wera.presentation.views.Contents.FavoritesScreen
+import com.werrah.wera.presentation.views.Contents.CreateScreen
 import com.werrah.wera.presentation.views.Contents.HomeScreen
 import com.werrah.wera.presentation.views.Contents.IndividualItemPage
 import com.werrah.wera.presentation.views.Contents.Location.location
@@ -27,6 +28,7 @@ import com.werrah.wera.presentation.views.Contents.MessagesScreen
 import com.werrah.wera.presentation.views.Contents.Profile.EditProfile
 import com.werrah.wera.presentation.views.Contents.Profile.OtherProfile
 import com.werrah.wera.presentation.views.Contents.Profile.ProfilePage
+import com.werrah.wera.presentation.views.Contents.favorites.FavoritesScreen
 
 
 @Composable
@@ -45,7 +47,8 @@ fun BottomNavGraph(
     deleteAccountViewModel: DeleteAccountViewModel,
     messagesViewModel : MessagesViewModel,
     favoritesViewModel :FavoritesViewModel,
-    removeFromFavoritesViewModel: RemoveFromFavoritesViewModel
+    removeFromFavoritesViewModel: RemoveFromFavoritesViewModel,
+    fetchFavoritesViewModel : FetchFavoritesViewModel
 ){
 
     NavHost(
@@ -57,10 +60,16 @@ fun BottomNavGraph(
             HomeScreen(navController, getListingsViewModel, getIndividualItemViewModel)
         }
 
+        composable(route = BottomBarScreen.Favorites.route)
+        {
+            FavoritesScreen(navController, getIndividualItemViewModel, fetchFavoritesViewModel, removeFromFavoritesViewModel)
+        }
+
         composable(route =BottomBarScreen.CreateListing.route)
         {
-            FavoritesScreen(postItemViewModel, navController, getListingsViewModel,  getUserListingsViewModel, getCategoriesViewModel)
+            CreateScreen(postItemViewModel, navController, getListingsViewModel,  getUserListingsViewModel, getCategoriesViewModel)
         }
+
 
         composable(route =BottomBarScreen.Messages.route)
         {
@@ -73,7 +82,7 @@ fun BottomNavGraph(
 
         composable(route =BottomBarScreen.Profile.route)
         {
-            ProfilePage(navController , sharedPreferences, getUserViewModel , getUserListingsViewModel, deleteListingViewModel , getListingsViewModel, logoutViewModel, deleteAccountViewModel  )
+            ProfilePage(navController , sharedPreferences, getUserViewModel , getUserListingsViewModel, deleteListingViewModel , getListingsViewModel, logoutViewModel, deleteAccountViewModel , fetchFavoritesViewModel )
         }
 
         composable(route = BottomBarScreen.OtherProfile.route)

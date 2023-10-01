@@ -4,6 +4,7 @@ package com.werrah.wera.presentation.views.Contents
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.werrah.wera.R
@@ -104,7 +106,9 @@ fun IndividualItemPage(
                                     modifier = Modifier.size(20.dp)
                                         .clickable { removeFromFavoritesViewModel.removeFromFavorites(
                                             itemData.listing?.id
-                                        ) }
+                                        )
+                                            Toast.makeText(context,"Removed from favorites",Toast.LENGTH_LONG).show()
+                                        }
                                 )
                             }else{
                                 Icon(
@@ -112,8 +116,8 @@ fun IndividualItemPage(
                                     contentDescription = "contact Icon",
                                     modifier = Modifier.size(20.dp)
                                         .clickable { favoritesViewModel.addToFavorites(
-                                            itemData.listing?.id
-                                        ) }
+                                            itemData.listing?.id)
+                                            Toast.makeText(context,"Added to  favorites",Toast.LENGTH_LONG).show()}
                                 )
                             }
 
@@ -151,10 +155,16 @@ fun IndividualItemPage(
 
             Text(text = "Location", style = TextStyle(fontWeight = FontWeight.Bold))
             Text(text = "${itemData.listing?.Location}")
+            Text(text = "${itemData.listing?.sublocation}")
 
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Budget", style = TextStyle(fontWeight = FontWeight.Bold))
             Text(text = "${itemData.listing?.amount}")
+            Text(
+                text = "Location",
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 12.sp)
+            )
+
 
             // Add other properties as needed
 
