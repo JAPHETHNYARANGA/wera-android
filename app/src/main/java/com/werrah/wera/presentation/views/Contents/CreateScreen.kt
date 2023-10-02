@@ -65,6 +65,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.werrah.wera.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -996,9 +997,7 @@ fun CreateScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-
             )
-
             Button(
                 onClick = {
                     if(!isPosting){
@@ -1144,13 +1143,15 @@ fun CreateScreen(
                                     Toast.makeText(context,"Please upload an image to continue", Toast.LENGTH_LONG).show()
                                 }
 
-
                             } catch (e: Exception) {
                                 Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
                                 Log.d("create listing","${e.message}")
                                 // You can also log the exception for debugging purposes
                                 e.printStackTrace()
                             }finally {
+                                // Use delay to ensure the loading spinner is visible for a recommended time
+                                delay(5000) // Adjust the duration as needed
+                                // Reset isPosting flag after the delay
                                 isPosting = false
 
                             }
@@ -1165,7 +1166,6 @@ fun CreateScreen(
                 if (isPosting) {
                     // Show loading spinner if posting is in progress
                     LoadingSpinner(isLoading = true)
-
                 } else {
                     // Show "Create" text when not posting
                     Text(text = "Create")
