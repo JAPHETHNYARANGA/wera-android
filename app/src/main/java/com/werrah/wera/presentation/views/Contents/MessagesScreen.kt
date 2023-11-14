@@ -36,6 +36,8 @@ import androidx.navigation.NavController
 import com.werrah.wera.R
 import com.werrah.wera.presentation.viewModel.MessagesViewModel
 import com.werrah.wera.presentation.viewModel.UpdateProfileViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,12 +108,16 @@ fun MessagesScreen(
                             }
                             Spacer(modifier = Modifier.width(30.dp))
                             Column() {
-                                message.message?.let { Text(text = it) }
+                                val truncatedMessage = message.message?.take(30) ?: ""
+                                Text(text = "$truncatedMessage...", maxLines = 1)  // Displaying only the first 10 characters
                                 Spacer(modifier = Modifier.height(30.dp))
-                                if (message.updated_at?.isEmpty()!!) {
-                                    message.created_at?.let { Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold)) }
-                                } else {
-                                    message.updated_at?.let { Text(text = it, style = TextStyle(fontWeight = FontWeight.Bold)) }
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                                val formattedDate =
+                                    dateFormat.parse(message.updated_at ?: message.created_at ?: "")
+                                formattedDate?.let {
+                                    val formattedDateString = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                        .format(it)
+                                    Text(text = formattedDateString, style = TextStyle(fontWeight = FontWeight.Bold))
                                 }
                             }
                         }
