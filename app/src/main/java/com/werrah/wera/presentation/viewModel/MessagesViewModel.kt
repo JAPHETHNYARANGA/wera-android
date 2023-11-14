@@ -153,9 +153,15 @@ class MessagesViewModel @Inject constructor(
         showIndividualMessage(chatId)
     }
 
+    // Function to clear individual messages
     fun clearIndividualMessages() {
         _individualMessage.value = emptyList() // Clear the individual messages list
-       
+    }
+
+    // Function to perform cleanup when the composable is no longer needed
+    fun onDispose() {
+        // Add any additional cleanup logic here
+        clearIndividualMessages()
     }
 }
 class MessageException(message: String) : Exception(message)

@@ -5,7 +5,7 @@ import com.werrah.wera.domain.repository.GetListingsRepository
 import javax.inject.Inject
 
 class GetListingUseCase @Inject constructor(private val getListingsRepository: GetListingsRepository) {
-    suspend fun getListingUseCase() : ListingsData{
-        return getListingsRepository.getPosts()
+    suspend fun getListingUseCase(currentPage:Int) : ListingsData{
+        return getListingsRepository.getPosts(currentPage)
     }
 }

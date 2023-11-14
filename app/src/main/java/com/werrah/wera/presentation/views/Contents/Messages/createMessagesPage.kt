@@ -2,6 +2,8 @@ package com.werrah.wera.presentation.views.Contents.Messages
 
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +40,7 @@ import com.werrah.wera.presentation.viewModel.MessagesViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -167,5 +171,26 @@ fun createMessagesPage(navController: NavController, messagesViewModel: Messages
     }
     Column() {
         Spacer(modifier = Modifier.height(30.dp))
+    }
+
+    DisposableEffect(Unit) {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // This is called when the back button is pressed
+                // Perform your cleanup or navigation logic here
+                messagesViewModel.clearIndividualMessages()
+                navController.popBackStack()
+            }
+        }
+
+        // Add the callback to the onBackPressedDispatcher
+//        val onBackPressedDispatcher = LocalOnBackPressedDispatcher.current
+//        onBackPressedDispatcher.addCallback(callback)
+
+        // Remove the callback when the composable is disposed
+        onDispose {
+            callback.remove()
+            messagesViewModel.onDispose() // Call the cleanup method
+        }
     }
 }

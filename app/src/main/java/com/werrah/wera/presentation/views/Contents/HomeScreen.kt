@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -67,8 +69,6 @@ fun HomeScreen(navController: NavController,
     }
 
 
-
-
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = {
@@ -79,12 +79,19 @@ fun HomeScreen(navController: NavController,
         content = {
             LazyVerticalStaggeredGrid(
                 modifier = Modifier.fillMaxSize(),
-                columns = StaggeredGridCells.Fixed(2)
+                columns = StaggeredGridCells.Fixed(2),
+                state = rememberLazyStaggeredGridState(),
             ) {
 
                 items(listings.size) { index ->
                     val process = listings[index]
                     Spacer(modifier = Modifier.height(20.dp))
+
+                    if (index == listings.size - 1) {
+                        // Fetch more data when the last item is visible
+                        getListingsViewModel.fetchListings()
+                    }
+
                     Row(
                         modifier = Modifier.padding(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)

@@ -36,7 +36,7 @@ class GetUserListingsViewModel @Inject constructor(private val getUserListingsUs
                 _isRefreshing.value = true
                 val listingData = getUserListingsUseCase.getUserListingsUseCase()
                 val listings = listingData.listings
-                _listings.value = listings
+                _listings.value = listings.data
 
 //                for (listing in listings) {
 //                    listing.image?.let { storageLocation ->

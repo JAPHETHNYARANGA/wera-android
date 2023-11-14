@@ -62,9 +62,9 @@ interface PostItem{
     suspend fun post(@Body postItemData : PostItemData) : Response<PostItemResponse>
 }
 
-interface GetPosts{
+interface GetPosts {
     @GET("listing")
-    suspend fun getListings() : ListingsData
+    suspend fun getListings(@Query("page") currentPage: Int): ListingsData
 }
 interface GetFavorites{
     @GET("getFavorites")

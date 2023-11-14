@@ -5,7 +5,7 @@ import com.werrah.wera.domain.models.ListingsData
 import javax.inject.Inject
 
 class GetListingsRepository @Inject constructor(private val getPosts: GetPosts) {
-    suspend fun getPosts() : ListingsData{
-        return getPosts.getListings()
+    suspend fun getPosts(currentPage:Int) : ListingsData{
+        return getPosts.getListings(currentPage)
     }
 }

@@ -2,6 +2,7 @@ package com.werrah.wera.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.werrah.wera.data.network.AddToFavorites
 import com.werrah.wera.data.network.DeleteAccount
 import com.werrah.wera.data.network.DeleteListing
@@ -24,6 +25,7 @@ import com.werrah.wera.data.network.PostMessageInterface
 import com.werrah.wera.data.network.RegisterUser
 import com.werrah.wera.data.network.RemoveFromFavorites
 import com.werrah.wera.data.network.UpdateProfile
+import com.werrah.wera.data.room.Database.WeraDatabase
 import com.werrah.wera.domain.repository.AddToFavoritesRepository
 import com.werrah.wera.domain.repository.DeleteAccountRepository
 import com.werrah.wera.domain.repository.DeleteListingRepository
@@ -108,12 +110,22 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.werrah.com/api/")
+//            .baseUrl("https://api.werrah.com/api/")
+            .baseUrl("https://baaa-197-232-87-139.ngrok-free.app/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
     }
 
+    @Singleton
+    @Provides
+    fun provideWeraDatabase(@ApplicationContext context: Context): WeraDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            WeraDatabase::class.java,
+            "wera_database"
+        ).build()
+    }
     //Interfaces
     @Provides
     fun provideLoginInterface(retrofit: Retrofit):LoginUser{

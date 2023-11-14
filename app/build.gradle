@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace 'com.werrah.wera'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.werrah.wera"
         minSdk 24
-        targetSdk 33
-        versionCode 4
-        versionName "2.3"
+        targetSdk 34
+        versionCode 6
+        versionName "2.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -46,6 +46,9 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    kapt {
+        generateStubs = true
     }
 }
 
@@ -81,6 +84,15 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.43.2"
     kapt "com.google.dagger:hilt-android-compiler:2.43.2"
 
+
+    //room
+    implementation "androidx.room:room-runtime:2.6.0"
+    implementation "androidx.room:room-ktx:2.6.0"
+
+//    annotationProcessor "androidx.room:room-compiler:2.6.0"
+
+
+
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
@@ -106,9 +118,6 @@ dependencies {
 
 //    coil
     implementation "io.coil-kt:coil-compose:2.1.0"
-
     implementation "me.saket.cascade:cascade-compose:2.0.0-rc01"
-    
-
 
 }
