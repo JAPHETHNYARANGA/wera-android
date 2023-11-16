@@ -312,6 +312,9 @@ fun ProfilePage(navController: NavController, sharedPreferences: SharedPreferenc
 
                     }
                 }
+                if (process == listings.lastOrNull()) {
+                    getUserListingsViewModel.loadMoreListings()
+                }
             }
         }
 

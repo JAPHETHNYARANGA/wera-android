@@ -95,4 +95,6 @@ class GetListingsViewModel @Inject constructor(
     }
 
 
+
+
 }

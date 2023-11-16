@@ -93,7 +93,7 @@ interface DeleteListing{
 
 interface GetUserListings{
     @GET("userListing")
-    suspend fun getUserListings() :ListingsData
+    suspend fun getUserListings(@Query("page") currentPage: Int) :ListingsData
 }
 
 interface UpdateProfile{

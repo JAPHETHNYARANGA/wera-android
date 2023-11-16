@@ -6,8 +6,8 @@ import javax.inject.Inject
 
 
 class GetUserListingsUseCase @Inject constructor(private val getUserListingsRepository: GetUserListingsRepository){
-    suspend fun getUserListingsUseCase() : ListingsData{
-        return getUserListingsRepository.getUserListings()
+    suspend fun getUserListingsUseCase(currentPage:Int) : ListingsData{
+        return getUserListingsRepository.getUserListings(currentPage)
     }
 }
 

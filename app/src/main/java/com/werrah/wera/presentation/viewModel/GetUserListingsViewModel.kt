@@ -26,6 +26,9 @@ class GetUserListingsViewModel @Inject constructor(private val getUserListingsUs
 
     val imageUrl: StateFlow<String?> = _imageUrl
 
+    private var currentPage = 1
+    private var totalPages = 1
+
     init {
         fetchListings()
     }
@@ -34,25 +37,27 @@ class GetUserListingsViewModel @Inject constructor(private val getUserListingsUs
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _isRefreshing.value = true
-                val listingData = getUserListingsUseCase.getUserListingsUseCase()
-                val listings = listingData.listings
-                _listings.value = listings.data
+//                val listingData = getUserListingsUseCase.getUserListingsUseCase()
+//                val listings = listingData.listings
+//                _listings.value = listings.data
 
-//                for (listing in listings) {
-//                    listing.image?.let { storageLocation ->
-//
-//                        val storage = FirebaseStorage.getInstance()
-//                        val storageRef = storage.getReference(storageLocation)
-//                        val imageUrl = storageRef.downloadUrl.await().toString()
-//                        _imageUrl.value = imageUrl
-//
-//
-//                    }
-//                }
+                val listingData = getUserListingsUseCase.getUserListingsUseCase(currentPage)
+                val listings = listingData.listings.data
+                _listings.value = _listings.value + listings // Append new data to the existing list
+
+                // Update pagination information
+                currentPage = listingData.listings.current_page + 1
+                totalPages = listingData.listings.last_page
 
             }catch (e: Exception){
                 Log.d("Failure fetching user listings", "${e.message}")
             }
+        }
+    }
+
+    fun loadMoreListings() {
+        if (currentPage <= totalPages) {
+            fetchListings()
         }
     }
 }

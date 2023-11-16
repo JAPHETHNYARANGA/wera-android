@@ -6,8 +6,8 @@ import javax.inject.Inject
 
 
 class GetUserListingsRepository @Inject constructor(private val getUserListings: GetUserListings) {
-    suspend fun getUserListings() : ListingsData {
-        return getUserListings.getUserListings()
+    suspend fun getUserListings(currentPage:Int) : ListingsData {
+        return getUserListings.getUserListings(currentPage)
     }
 }
 
