@@ -161,6 +161,10 @@ fun FavoritesScreen(
                             }
                         }
                     }
+                    // Fetch more data when the last item is visible
+                    if (index == listings.size - 1) {
+                        fetchFavoritesViewModel.fetchFavorites()
+                    }
                 }
             }
         }

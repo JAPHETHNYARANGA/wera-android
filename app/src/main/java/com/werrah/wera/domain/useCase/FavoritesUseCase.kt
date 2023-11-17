@@ -24,7 +24,7 @@ class RemoveFromFavoritesUseCase @Inject constructor(private val removeFromFavor
 }
 
 class GetFavoritesUseCase @Inject constructor(private val getFavoritesRepository: GetFavoritesRepository){
-    suspend fun  getFavorites() : Favorites {
-        return getFavoritesRepository.getFavorites()
+    suspend fun  getFavorites(currentPage:Int) : Favorites {
+        return getFavoritesRepository.getFavorites(currentPage)
     }
 }

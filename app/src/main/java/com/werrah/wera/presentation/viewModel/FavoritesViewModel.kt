@@ -68,21 +68,29 @@ class FetchFavoritesViewModel @Inject constructor(private val getFavoritesUseCas
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> get() = _isRefreshing
 
+    private var currentPage = 1
+    private var totalPages = 1
+
 
     init {
         fetchFavorites()
     }
 
     fun fetchFavorites(){
-        if (!_isRefreshing.value) {
+        if (!_isRefreshing.value && currentPage <= totalPages) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     _isRefreshing.value = true
-                    val favoritesData = getFavoritesUseCase.getFavorites()
+                    val favoritesData = getFavoritesUseCase.getFavorites(currentPage)
                     val favorites = favoritesData.listings
-                    _favorites.value = favorites
-                    Log.d("Favorites", "$favoritesData")
+                    val currentList = _favorites.value.toMutableList()
+                    currentList.addAll(favorites.data)
+                    _favorites.value = currentList
 
+                    // Update pagination information
+                    currentPage = favoritesData.listings.current_page + 1
+                    totalPages = favoritesData.listings.last_page
+                    Log.d("Favorites successfully favorites", "${favorites.data}")
                 } catch (e: Exception) {
                     Log.d("Failure fetching favorites", "${e.message}")
                 } finally {
@@ -96,5 +104,6 @@ class FetchFavoritesViewModel @Inject constructor(private val getFavoritesUseCas
     fun refreshListings() {
         fetchFavorites()
     }
+
 
 }

@@ -22,7 +22,7 @@ class RemoveFromFavoritesRepository @Inject constructor(private val removeFromFa
 }
 
 class GetFavoritesRepository @Inject constructor(private val getFavorites: GetFavorites){
-    suspend fun getFavorites() : Favorites {
-        return getFavorites.getFavorites()
+    suspend fun getFavorites(currentPage:Int) : Favorites {
+        return getFavorites.getFavorites(currentPage)
     }
 }

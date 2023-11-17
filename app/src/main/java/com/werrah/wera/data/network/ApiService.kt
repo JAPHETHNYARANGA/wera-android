@@ -68,7 +68,7 @@ interface GetPosts {
 }
 interface GetFavorites{
     @GET("getFavorites")
-    suspend fun getFavorites() : Favorites
+    suspend fun getFavorites(@Query("page") currentPage: Int) : Favorites
 }
 
 interface GetIndividualListing{
