@@ -90,9 +90,9 @@ class FetchFavoritesViewModel @Inject constructor(private val getFavoritesUseCas
                     // Update pagination information
                     currentPage = favoritesData.listings.current_page + 1
                     totalPages = favoritesData.listings.last_page
-                    Log.d("Favorites successfully favorites", "${favorites.data}")
+
                 } catch (e: Exception) {
-                    Log.d("Failure fetching favorites", "${e.message}")
+                    _isRefreshing.value = false
                 } finally {
                     _isRefreshing.value = false
                 }
